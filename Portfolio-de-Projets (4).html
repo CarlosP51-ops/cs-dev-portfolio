@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créer un Article - Portfolio</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#4285F4',
+secondary: '#34A853'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<style>
+:where([class^="ri-"])::before {
+content: "\f3c2";
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<nav class="bg-white shadow-sm">
+<div class="max-w-7xl mx-auto px-6 py-4">
+<div class="flex items-center justify-between">
+<div class="font-['Pacifico'] text-2xl text-primary">logo</div>
+<div class="hidden md:flex items-center space-x-8">
+<a href="#" class="text-gray-600 hover:text-primary transition-colors">Accueil</a>
+<a href="#" class="text-gray-600 hover:text-primary transition-colors">À propos</a>
+<a href="#" class="text-primary font-medium">Projets</a>
+<a href="#" class="text-gray-600 hover:text-primary transition-colors">Blog</a>
+<a href="#" class="text-gray-600 hover:text-primary transition-colors">Contact</a>
+<button id="addProjectBtn" class="bg-primary text-white px-6 py-2 !rounded-button hover:bg-blue-600 transition-colors whitespace-nowrap">
+Ajouter un projet
+</button>
+</div>
+<div class="flex items-center gap-4">
+<button id="loginBtn" class="text-gray-600 hover:text-primary transition-colors whitespace-nowrap">
+Se connecter
+</button>
+<button class="bg-primary text-white px-6 py-2 !rounded-button hover:bg-blue-600 transition-colors whitespace-nowrap">
+Télécharger CV
+</button>
+<button class="md:hidden w-8 h-8 flex items-center justify-center" id="mobile-menu-btn">
+</div>
+<i class="ri-menu-line text-xl"></i>
+</button>
+</div>
+</div>
+</nav>
+<div class="mobile-menu hidden md:hidden bg-white shadow-lg" id="mobile-menu">
+<div class="px-6 py-4 space-y-4">
+<a href="#" class="block text-gray-600">Accueil</a>
+<a href="#" class="block text-gray-600">À propos</a>
+<a href="#" class="block text-primary font-medium">Projets</a>
+<a href="#" class="block text-gray-600">Blog</a>
+<a href="#" class="block text-gray-600">Contact</a>
+</div>
+</div>
+<main class="max-w-7xl mx-auto px-6 py-12">
+<div class="text-center mb-12">
+<h1 class="text-4xl font-bold text-gray-900 mb-4">Créer un Article</h1>
+<p class="text-lg text-gray-600 max-w-2xl mx-auto">
+Partagez vos connaissances et expériences en créant un nouvel article pour votre blog.
+</p>
+</div>
+<div class="max-w-3xl mx-auto bg-white rounded-lg shadow-sm p-8">
+<form id="blogForm" class="space-y-8">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Titre de l'article</label>
+<input type="text" name="title" required class="w-full px-4 py-3 border border-gray-300 !rounded-button focus:border-primary focus:outline-none" placeholder="Titre de votre article">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Résumé</label>
+<textarea name="summary" required class="w-full px-4 py-3 border border-gray-300 !rounded-button focus:border-primary focus:outline-none resize-none" rows="3" maxlength="500" placeholder="Un bref résumé de votre article"></textarea>
+<div class="text-xs text-gray-500 mt-1">
+<span id="summaryCount">0</span>/500 caractères
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Contenu de l'article</label>
+<div class="border border-gray-300 !rounded-button overflow-hidden">
+<div class="flex items-center gap-2 p-2 border-b bg-gray-50">
+<button type="button" class="p-2 hover:bg-gray-200 !rounded-button" title="Gras">
+<i class="ri-bold"></i>
+</button>
+<button type="button" class="p-2 hover:bg-gray-200 !rounded-button" title="Italique">
+<i class="ri-italic"></i>
+</button>
+<button type="button" class="p-2 hover:bg-gray-200 !rounded-button" title="Souligné">
+<i class="ri-underline"></i>
+</button>
+<span class="w-px h-6 bg-gray-300"></span>
+<button type="button" class="p-2 hover:bg-gray-200 !rounded-button" title="Liste à puces">
+<i class="ri-list-unordered"></i>
+</button>
+<button type="button" class="p-2 hover:bg-gray-200 !rounded-button" title="Liste numérotée">
+<i class="ri-list-ordered"></i>
+</button>
+<span class="w-px h-6 bg-gray-300"></span>
+<button type="button" class="p-2 hover:bg-gray-200 !rounded-button" title="Ajouter un lien">
+<i class="ri-link"></i>
+</button>
+<button type="button" class="p-2 hover:bg-gray-200 !rounded-button" title="Ajouter une image">
+<i class="ri-image-add-line"></i>
+</button>
+</div>
+<textarea name="content" required class="w-full px-4 py-3 border-none focus:outline-none resize-none" rows="12" placeholder="Rédigez votre article ici..."></textarea>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
+<select name="category" required class="w-full px-4 py-3 border border-gray-300 !rounded-button focus:border-primary focus:outline-none">
+<option value="">Sélectionnez une catégorie</option>
+<option value="tech">Technologie</option>
+<option value="dev">Développement</option>
+<option value="design">Design</option>
+<option value="business">Business</option>
+<option value="lifestyle">Lifestyle</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+<div class="relative">
+<input type="text" id="tagInput" class="w-full px-4 py-3 border border-gray-300 !rounded-button focus:border-primary focus:outline-none" placeholder="Ajoutez des tags (appuyez sur Entrée)">
+<div id="tagContainer" class="flex flex-wrap gap-2 mt-2"></div>
+<input type="hidden" name="tags" id="tagsHidden">
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Image de couverture</label>
+<div class="border-2 border-dashed border-gray-300 !rounded-button p-6 text-center">
+<div class="mb-4">
+<i class="ri-image-line text-4xl text-gray-400"></i>
+<p class="mt-2 text-sm text-gray-600">Choisissez une image de couverture pour votre article</p>
+<button type="button" class="text-primary hover:text-blue-600 font-medium">Sélectionner une image</button>
+</div>
+<input type="file" id="coverImage" name="coverImage" accept="image/*" class="hidden">
+</div>
+<div id="coverImagePreview" class="mt-4"></div>
+<p class="text-xs text-gray-500 mt-2">Format accepté : JPG, PNG. Taille maximale : 5MB</p>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Images de l'article</label>
+<div class="border-2 border-dashed border-gray-300 !rounded-button p-6 text-center">
+<div class="mb-4">
+<i class="ri-upload-cloud-line text-4xl text-gray-400"></i>
+<p class="mt-2 text-sm text-gray-600">Glissez-déposez vos images ici ou</p>
+<button type="button" class="text-primary hover:text-blue-600 font-medium">parcourez vos fichiers</button>
+</div>
+<input type="file" id="articleImages" name="articleImages" multiple accept="image/*" class="hidden">
+</div>
+<div id="articleImagesPreview" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4"></div>
+<p class="text-xs text-gray-500 mt-2">Formats acceptés : JPG, PNG. Taille maximale : 5MB par image</p>
+</div>
+<div class="flex items-center gap-2 mb-6">
+<input type="checkbox" id="draft" name="draft" class="w-4 h-4 accent-primary">
+<label for="draft" class="text-sm text-gray-700">Sauvegarder comme brouillon</label>
+</div>
+<div class="flex justify-end gap-4">
+<button type="button" class="px-6 py-3 border border-gray-300 !rounded-button hover:border-primary hover:text-primary transition-colors whitespace-nowrap">
+Annuler
+</button>
+<button type="submit" class="px-6 py-3 bg-primary text-white !rounded-button hover:bg-blue-600 transition-colors whitespace-nowrap">
+Publier l'article
+</button>
+</div>
+</form>
+</div>
+<p class="text-lg text-gray-600 max-w-2xl mx-auto">
+Découvrez une sélection de mes réalisations en développement web,
+allant des applications e-commerce aux plateformes éducatives.
+</p>
+</div>
+<div class="mb-8">
+<div class="flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex flex-wrap items-center gap-3">
+<button class="filter-btn active bg-primary text-white px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-filter="all">
+Tous les projets
+</button>
+<button class="filter-btn bg-white text-gray-600 px-4 py-2 !rounded-button text-sm border hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-filter="web">
+Applications Web
+</button>
+<button class="filter-btn bg-white text-gray-600 px-4 py-2 !rounded-button text-sm border hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-filter="mobile">
+Mobile
+</button>
+<button class="filter-btn bg-white text-gray-600 px-4 py-2 !rounded-button text-sm border hover:border-primary hover:text-primary transition-colors whitespace-nowrap" data-filter="ecommerce">
+E-commerce
+</button>
+</div>
+<div class="relative">
+<input type="text" placeholder="Rechercher un projet..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 !rounded-button focus:outline-none focus:border-primary text-sm">
+<div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 flex items-center justify-center">
+<i class="ri-search-line text-gray-400 text-sm"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="ecommerce">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=modern%20e-commerce%20website%20interface%20with%20clean%20white%20background%2C%20product%20catalog%20layout%2C%20shopping%20cart%20functionality%2C%20elegant%20design%20with%20soft%20lighting%20and%20professional%20presentation&width=400&height=300&seq=1&orientation=landscape"
+alt="E-commerce Bio" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">E-commerce Produits Bio</h3>
+<p class="text-gray-600 text-sm mb-4">
+Boutique en ligne spécialisée dans la vente de produits cosmétiques bio avec système de paiement sécurisé.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs !rounded-button">React</span>
+<span class="px-3 py-1 bg-green-100 text-green-800 text-xs !rounded-button">Node.js</span>
+<span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs !rounded-button">MongoDB</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="web">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=fitness%20training%20application%20interface%20with%20workout%20tracking%2C%20clean%20modern%20design%2C%20exercise%20dashboard%2C%20progress%20charts%2C%20white%20background%20with%20vibrant%20accent%20colors&width=400&height=300&seq=2&orientation=landscape"
+alt="Application Fitness" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Application de Fitness</h3>
+<p class="text-gray-600 text-sm mb-4">
+Plateforme d'entraînement personnalisé avec suivi des performances et programme d'entraînement sur mesure.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-red-100 text-red-800 text-xs !rounded-button">React Native</span>
+<span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs !rounded-button">Firebase</span>
+<span class="px-3 py-1 bg-red-100 text-red-800 text-xs !rounded-button">Redux</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="web">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=customer%20relationship%20management%20dashboard%20interface%2C%20clean%20business%20application%20design%2C%20data%20tables%2C%20client%20management%20system%2C%20professional%20white%20background%20layout&width=400&height=300&seq=3&orientation=landscape"
+alt="Système CRM" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Système CRM Avancé</h3>
+<p class="text-gray-600 text-sm mb-4">
+Solution complète de gestion client avec intégration d'un tableau de bord client.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-green-100 text-green-800 text-xs !rounded-button">Vue.js</span>
+<span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs !rounded-button">Laravel</span>
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs !rounded-button">MySQL</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="web">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=elegant%20restaurant%20website%20interface%20with%20menu%20display%2C%20food%20photography%2C%20reservation%20system%2C%20warm%20lighting%2C%20professional%20culinary%20presentation%20with%20clean%20white%20background&width=400&height=300&seq=4&orientation=landscape"
+alt="Restaurant La Belle Assiette" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Restaurant La Belle Assiette</h3>
+<p class="text-gray-600 text-sm mb-4">
+Site web pour un restaurant gastronomique avec système de réservation en ligne et présentation du menu interactif.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs !rounded-button">JavaScript</span>
+<span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs !rounded-button">PHP</span>
+<span class="px-3 py-1 bg-pink-100 text-pink-800 text-xs !rounded-button">SCSS</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="web">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=real%20estate%20platform%20interface%20with%20property%20listings%2C%20map%20integration%2C%20search%20functionality%2C%20modern%20clean%20design%20with%20white%20background%2C%20professional%20property%20management%20system&width=400&height=300&seq=5&orientation=landscape"
+alt="Plateforme Immobilière" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Plateforme Immobilière</h3>
+<p class="text-gray-600 text-sm mb-4">
+Plateforme de mise en relation entre propriétaires et locataires avec système de messagerie intégrée et gestion des visites.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs !rounded-button">React</span>
+<span class="px-3 py-1 bg-green-100 text-green-800 text-xs !rounded-button">Express</span>
+<span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs !rounded-button">PostgreSQL</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="web">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=e-learning%20platform%20interface%20with%20course%20management%2C%20student%20dashboard%2C%20video%20streaming%2C%20modern%20educational%20design%20with%20clean%20white%20background%2C%20professional%20learning%20environment&width=400&height=300&seq=6&orientation=landscape"
+alt="Plateforme E-learning" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Plateforme E-learning</h3>
+<p class="text-gray-600 text-sm mb-4">
+Plateforme éducative proposant des cours en ligne avec suivi de progression et système de certification.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-red-100 text-red-800 text-xs !rounded-button">Angular</span>
+<span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs !rounded-button">Django</span>
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs !rounded-button">AWS</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="mobile">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=mobile%20banking%20application%20interface%20with%20financial%20dashboard%2C%20transaction%20history%2C%20secure%20payment%20system%2C%20modern%20fintech%20design%20with%20clean%20white%20background&width=400&height=300&seq=7&orientation=landscape"
+alt="Application Bancaire" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Application Bancaire Mobile</h3>
+<p class="text-gray-600 text-sm mb-4">
+Application mobile sécurisée pour la gestion des comptes bancaires avec authentification biométrique.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs !rounded-button">Flutter</span>
+<span class="px-3 py-1 bg-green-100 text-green-800 text-xs !rounded-button">Node.js</span>
+<span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs !rounded-button">MongoDB</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="ecommerce">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=fashion%20e-commerce%20website%20with%20clothing%20catalog%2C%20shopping%20interface%2C%20product%20gallery%2C%20stylish%20modern%20design%20with%20clean%20white%20background%2C%20luxury%20fashion%20presentation&width=400&height=300&seq=8&orientation=landscape"
+alt="Boutique Mode" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Boutique de Mode en Ligne</h3>
+<p class="text-gray-600 text-sm mb-4">
+E-commerce spécialisé dans la mode avec système de recommandation personnalisé et essayage virtuel.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-green-100 text-green-800 text-xs !rounded-button">Vue.js</span>
+<span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs !rounded-button">Nuxt.js</span>
+<span class="px-3 py-1 bg-red-100 text-red-800 text-xs !rounded-button">Strapi</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+<div class="project-card bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden" data-category="web">
+<div class="h-48 bg-gray-100 relative overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=healthcare%20management%20system%20interface%20with%20patient%20records%2C%20appointment%20scheduling%2C%20medical%20dashboard%2C%20professional%20healthcare%20design%20with%20clean%20white%20background&width=400&height=300&seq=9&orientation=landscape"
+alt="Système de Santé" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Système de Gestion Médicale</h3>
+<p class="text-gray-600 text-sm mb-4">
+Plateforme complète pour la gestion des dossiers patients avec prise de rendez-vous en ligne.
+</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs !rounded-button">React</span>
+<span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs !rounded-button">Laravel</span>
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs !rounded-button">MySQL</span>
+</div>
+<button class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors text-sm whitespace-nowrap">
+Voir plus
+</button>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-12">
+<div class="flex items-center space-x-2">
+<button class="w-10 h-10 flex items-center justify-center border border-gray-300 !rounded-button hover:border-primary hover:text-primary transition-colors">
+<i class="ri-arrow-left-s-line"></i>
+</button>
+<button class="w-10 h-10 flex items-center justify-center bg-primary text-white !rounded-button">1</button>
+<button class="w-10 h-10 flex items-center justify-center border border-gray-300 !rounded-button hover:border-primary hover:text-primary transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center border border-gray-300 !rounded-button hover:border-primary hover:text-primary transition-colors">3</button>
+<button class="w-10 h-10 flex items-center justify-center border border-gray-300 !rounded-button hover:border-primary hover:text-primary transition-colors">
+<i class="ri-arrow-right-s-line"></i>
+</button>
+</div>
+</div>
+<div class="text-center mt-6">
+<p class="text-gray-600 text-sm">Affichage de 9 projets sur 27 au total</p>
+</div>
+</main>
+<footer class="bg-white border-t mt-20">
+<div class="max-w-7xl mx-auto px-6 py-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="col-span-1 md:col-span-2">
+<div class="font-['Pacifico'] text-2xl text-primary mb-4">logo</div>
+<p class="text-gray-600 mb-4">
+Développeur full-stack passionné par la création d'expériences digitales innovantes et performantes.
+</p>
+<div class="flex space-x-4">
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-primary hover:text-white transition-colors !rounded-button">
+<i class="ri-github-line"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-primary hover:text-white transition-colors !rounded-button">
+<i class="ri-linkedin-line"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-primary hover:text-white transition-colors !rounded-button">
+<i class="ri-twitter-line"></i>
+</a>
+</div>
+</div>
+<div>
+<h4 class="font-semibold text-gray-900 mb-4">Navigation</h4>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Accueil</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary transition-colors">À propos</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Projets</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary transition-colors">Contact</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-semibold text-gray-900 mb-4">Contact</h4>
+<ul class="space-y-2">
+<li class="text-gray-600">contact@exemple.fr</li>
+<li class="text-gray-600">+33 1 23 45 67 89</li>
+<li class="text-gray-600">Paris, France</li>
+</ul>
+</div>
+</div>
+<div class="border-t mt-8 pt-8 text-center">
+<p class="text-gray-600 text-sm">© 2025 Portfolio. Tous droits réservés.</p>
+</div>
+</div>
+</footer>
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+<div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-semibold text-gray-900">Se connecter</h2>
+<button class="close-modal text-gray-500 hover:text-gray-700">
+<i class="ri-close-line text-2xl"></i>
+</button>
+</div>
+<form id="loginForm">
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+<input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 !rounded-button focus:border-primary focus:outline-none" placeholder="Votre email">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+<input type="password" name="password" required class="w-full px-4 py-2 border border-gray-300 !rounded-button focus:border-primary focus:outline-none" placeholder="Votre mot de passe">
+</div>
+<button type="submit" class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors">
+Se connecter
+</button>
+</div>
+</form>
+</div>
+</div>
+<div id="newProjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+<div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-semibold text-gray-900">Créer un nouveau projet</h2>
+<button class="close-modal text-gray-500 hover:text-gray-700">
+<i class="ri-close-line text-2xl"></i>
+</button>
+</div>
+<form id="newProjectForm">
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Titre du projet</label>
+<input type="text" name="title" required class="w-full px-4 py-2 border border-gray-300 !rounded-button focus:border-primary focus:outline-none" placeholder="Nom du projet">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+<textarea name="description" required class="w-full px-4 py-2 border border-gray-300 !rounded-button focus:border-primary focus:outline-none resize-none" rows="4" maxlength="500" placeholder="Description détaillée du projet"></textarea>
+<div class="text-xs text-gray-500 mt-1">
+<span id="charCount">0</span>/500 caractères
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+<select name="category" required class="w-full px-4 py-2 border border-gray-300 !rounded-button focus:border-primary focus:outline-none appearance-none pr-8">
+<option value="">Sélectionner une catégorie</option>
+<option value="web">Applications Web</option>
+<option value="mobile">Mobile</option>
+<option value="ecommerce">E-commerce</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Technologies utilisées</label>
+<div class="flex flex-wrap gap-2 p-4 border border-gray-300 !rounded-button">
+<label class="flex items-center gap-2 px-3 py-1 bg-gray-100 !rounded-button">
+<input type="checkbox" name="technologies" value="React" class="accent-primary">
+<span>React</span>
+</label>
+<label class="flex items-center gap-2 px-3 py-1 bg-gray-100 !rounded-button">
+<input type="checkbox" name="technologies" value="Vue.js" class="accent-primary">
+<span>Vue.js</span>
+</label>
+<label class="flex items-center gap-2 px-3 py-1 bg-gray-100 !rounded-button">
+<input type="checkbox" name="technologies" value="Angular" class="accent-primary">
+<span>Angular</span>
+</label>
+<label class="flex items-center gap-2 px-3 py-1 bg-gray-100 !rounded-button">
+<input type="checkbox" name="technologies" value="Node.js" class="accent-primary">
+<span>Node.js</span>
+</label>
+<label class="flex items-center gap-2 px-3 py-1 bg-gray-100 !rounded-button">
+<input type="checkbox" name="technologies" value="Laravel" class="accent-primary">
+<span>Laravel</span>
+</label>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Images du projet</label>
+<div class="border border-dashed border-gray-300 !rounded-button p-4">
+<input type="file" name="images" multiple accept="image/*" class="w-full" id="projectImages">
+<div id="imagePreview" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4"></div>
+</div>
+<p class="text-xs text-gray-500 mt-1">Vous pouvez sélectionner plusieurs images</p>
+</div>
+<button type="submit" class="w-full bg-primary text-white py-2 !rounded-button hover:bg-blue-600 transition-colors">
+Créer le projet
+</button>
+</div>
+</form>
+</div>
+</div>
+<script id="mobile-menu-script">
+document.addEventListener('DOMContentLoaded', function() {
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+mobileMenuBtn.addEventListener('click', function() {
+mobileMenu.classList.toggle('hidden');
+});
+});
+</script>
+<script id="filter-script">
+document.addEventListener('DOMContentLoaded', function() {
+const filterBtns = document.querySelectorAll('.filter-btn');
+const projectCards = document.querySelectorAll('.project-card');
+filterBtns.forEach(btn => {
+btn.addEventListener('click', function() {
+filterBtns.forEach(b => {
+b.classList.remove('active', 'bg-primary', 'text-white');
+b.classList.add('bg-white', 'text-gray-600', 'border');
+});
+this.classList.add('active', 'bg-primary', 'text-white');
+this.classList.remove('bg-white', 'text-gray-600', 'border');
+const filter = this.getAttribute('data-filter');
+projectCards.forEach(card => {
+if (filter === 'all' || card.getAttribute('data-category') === filter) {
+card.style.display = 'block';
+} else {
+card.style.display = 'none';
+}
+});
+});
+});
+});
+</script>
+<script id="search-script">
+document.addEventListener('DOMContentLoaded', function() {
+const searchInput = document.querySelector('input[placeholder="Rechercher un projet..."]');
+const projectCards = document.querySelectorAll('.project-card');
+searchInput.addEventListener('input', function() {
+const searchTerm = this.value.toLowerCase();
+projectCards.forEach(card => {
+const title = card.querySelector('h3').textContent.toLowerCase();
+const description = card.querySelector('p').textContent.toLowerCase();
+if (title.includes(searchTerm) || description.includes(searchTerm)) {
+card.style.display = 'block';
+} else {
+card.style.display = 'none';
+}
+});
+});
+});
+</script>
+<script id="blog-form-script">
+document.addEventListener('DOMContentLoaded', function() {
+const blogForm = document.getElementById('blogForm');
+const summaryCount = document.getElementById('summaryCount');
+const summary = blogForm.querySelector('textarea[name="summary"]');
+const coverImage = document.getElementById('coverImage');
+const coverImagePreview = document.getElementById('coverImagePreview');
+const articleImages = document.getElementById('articleImages');
+const articleImagesPreview = document.getElementById('articleImagesPreview');
+const uploadAreas = document.querySelectorAll('.border-dashed');
+const tagInput = document.getElementById('tagInput');
+const tagContainer = document.getElementById('tagContainer');
+const tagsHidden = document.getElementById('tagsHidden');
+const tags = new Set();
+tagInput.addEventListener('keydown', (e) => {
+if (e.key === 'Enter') {
+e.preventDefault();
+const tag = tagInput.value.trim();
+if (tag && !tags.has(tag)) {
+tags.add(tag);
+const tagElement = document.createElement('span');
+tagElement.className = 'px-3 py-1 bg-gray-100 text-gray-700 !rounded-button flex items-center gap-2';
+tagElement.innerHTML = `
+${tag}
+<button type="button" class="text-gray-500 hover:text-red-500">
+<i class="ri-close-line"></i>
+</button>
+`;
+tagElement.querySelector('button').addEventListener('click', () => {
+tags.delete(tag);
+tagElement.remove();
+updateHiddenTags();
+});
+tagContainer.appendChild(tagElement);
+tagInput.value = '';
+updateHiddenTags();
+}
+}
+});
+function updateHiddenTags() {
+tagsHidden.value = Array.from(tags).join(',');
+}
+const formatButtons = document.querySelectorAll('.border-b button');
+const contentArea = blogForm.querySelector('textarea[name="content"]');
+formatButtons.forEach(button => {
+button.addEventListener('click', () => {
+const command = button.getAttribute('title').toLowerCase();
+const selection = {
+start: contentArea.selectionStart,
+end: contentArea.selectionEnd,
+text: contentArea.value.substring(contentArea.selectionStart, contentArea.selectionEnd)
+};
+let replacement = '';
+switch(command) {
+case 'gras':
+replacement = `**${selection.text}**`;
+break;
+case 'italique':
+replacement = `*${selection.text}*`;
+break;
+case 'souligné':
+replacement = `_${selection.text}_`;
+break;
+case 'liste à puces':
+replacement = selection.text.split('\n').map(line => `• ${line}`).join('\n');
+break;
+case 'liste numérotée':
+replacement = selection.text.split('\n').map((line, i) => `${i + 1}. ${line}`).join('\n');
+break;
+case 'ajouter un lien':
+const url = prompt('Entrez l\'URL:', 'https://');
+if (url) replacement = `[${selection.text}](${url})`;
+break;
+case 'ajouter une image':
+coverImage.click();
+return;
+}
+if (replacement) {
+contentArea.value = contentArea.value.substring(0, selection.start) +
+replacement +
+contentArea.value.substring(selection.end);
+}
+});
+});
+summary.addEventListener('input', () => {
+summaryCount.textContent = summary.value.length;
+});
+uploadAreas.forEach((uploadArea, index) => {
+const input = index === 0 ? coverImage : articleImages;
+const preview = index === 0 ? coverImagePreview : articleImagesPreview;
+uploadArea.addEventListener('click', () => {
+input.click();
+});
+uploadArea.addEventListener('dragover', (e) => {
+e.preventDefault();
+uploadArea.classList.add('border-primary');
+});
+uploadArea.addEventListener('dragleave', () => {
+uploadArea.classList.remove('border-primary');
+});
+uploadArea.addEventListener('drop', (e) => {
+e.preventDefault();
+uploadArea.classList.remove('border-primary');
+const files = e.dataTransfer.files;
+if (index === 0 && files.length > 0) {
+handleMainImage(files[0]);
+} else {
+handleAdditionalImages(files);
+}
+});
+input.addEventListener('change', (e) => {
+if (index === 0 && e.target.files.length > 0) {
+handleMainImage(e.target.files[0]);
+} else {
+handleAdditionalImages(e.target.files);
+}
+});
+});
+function handleMainImage(file) {
+if (!file.type.startsWith('image/')) return;
+if (file.size > 5 * 1024 * 1024) {
+const toast = document.createElement('div');
+toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg';
+toast.textContent = 'Image trop volumineuse. Taille maximale : 5MB';
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 3000);
+return;
+}
+const reader = new FileReader();
+reader.onload = (e) => {
+mainImagePreview.innerHTML = `
+<div class="relative aspect-video">
+<img src="${e.target.result}" class="w-full h-full object-cover !rounded-button">
+<button type="button" class="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+`;
+mainImagePreview.querySelector('button').addEventListener('click', () => {
+mainImagePreview.innerHTML = '';
+mainProjectImage.value = '';
+});
+};
+reader.readAsDataURL(file);
+}
+function handleAdditionalImages(files) {
+[...files].forEach(file => {
+if (!file.type.startsWith('image/')) return;
+if (file.size > 5 * 1024 * 1024) {
+const toast = document.createElement('div');
+toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg';
+toast.textContent = 'Image trop volumineuse. Taille maximale : 5MB';
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 3000);
+return;
+}
+const reader = new FileReader();
+reader.onload = (e) => {
+const div = document.createElement('div');
+div.className = 'relative aspect-video group';
+div.innerHTML = `
+<img src="${e.target.result}" class="w-full h-full object-cover !rounded-button">
+<button type="button" class="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<i class="ri-delete-bin-line"></i>
+</button>
+`;
+div.querySelector('button').addEventListener('click', () => {
+div.remove();
+});
+additionalImagesPreview.appendChild(div);
+};
+reader.readAsDataURL(file);
+});
+}
+blogForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const formData = new FormData(blogForm);
+const data = {
+...Object.fromEntries(formData),
+tags: Array.from(tags),
+coverImage: coverImagePreview.querySelector('img')?.src,
+images: [...articleImagesPreview.children].map(div => div.querySelector('img').src)
+};
+console.log('Article soumis:', data);
+const toast = document.createElement('div');
+toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg';
+toast.textContent = formData.get('draft') === 'on' ? 'Brouillon enregistré avec succès' : 'Article publié avec succès';
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 3000);
+});
+});
+</script>
+<script id="modal-script">
+document.addEventListener('DOMContentLoaded', function() {
+const loginBtn = document.getElementById('loginBtn');
+const loginModal = document.getElementById('loginModal');
+const newProjectModal = document.getElementById('newProjectModal');
+const closeButtons = document.querySelectorAll('.close-modal');
+loginBtn.addEventListener('click', () => {
+loginModal.classList.remove('hidden');
+loginModal.classList.add('flex');
+});
+closeButtons.forEach(button => {
+button.addEventListener('click', () => {
+loginModal.classList.add('hidden');
+loginModal.classList.remove('flex');
+newProjectModal.classList.add('hidden');
+newProjectModal.classList.remove('flex');
+});
+});
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape') {
+loginModal.classList.add('hidden');
+loginModal.classList.remove('flex');
+newProjectModal.classList.add('hidden');
+newProjectModal.classList.remove('flex');
+}
+});
+const loginForm = document.getElementById('loginForm');
+loginForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const formData = new FormData(loginForm);
+console.log('Login form submitted:', Object.fromEntries(formData));
+newProjectModal.classList.remove('hidden');
+newProjectModal.classList.add('flex');
+loginModal.classList.add('hidden');
+loginModal.classList.remove('flex');
+});
+const newProjectForm = document.getElementById('newProjectForm');
+const charCount = document.getElementById('charCount');
+const description = newProjectForm.querySelector('textarea[name="description"]');
+summary.addEventListener('input', () => {
+summaryCount.textContent = summary.value.length;
+});
+const projectImages = document.getElementById('projectImages');
+const imagePreview = document.getElementById('imagePreview');
+projectImages.addEventListener('change', () => {
+imagePreview.innerHTML = '';
+[...projectImages.files].forEach(file => {
+const reader = new FileReader();
+reader.onload = (e) => {
+const div = document.createElement('div');
+div.className = 'relative aspect-video';
+div.innerHTML = `
+<img src="${e.target.result}" class="w-full h-full object-cover !rounded-button">
+`;
+imagePreview.appendChild(div);
+};
+reader.readAsDataURL(file);
+});
+});
+newProjectForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const formData = new FormData(newProjectForm);
+const technologies = [...formData.getAll('technologies')];
+formData.delete('technologies');
+const data = {
+...Object.fromEntries(formData),
+technologies
+};
+console.log('New project form submitted:', data);
+newProjectModal.classList.add('hidden');
+newProjectModal.classList.remove('flex');
+});
+});
+</script>
+</body>
+</html>
