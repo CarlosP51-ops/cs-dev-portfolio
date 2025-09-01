@@ -72,7 +72,7 @@ public function send(Request $request)
 
         // Envoi de l'email
         Mail::send('contact', $data, function($message) use ($data) {
-            $message->to('carlosmahunansomissi@gmail.com', 'SOMISSI Mahunan Carlos')
+            $message->to('somissicarlos56@gmail.com', 'SOMISSI Mahunan Carlos')
                     ->subject('Nouveau message: ' . $data['subject'])
                     ->replyTo($data['email'], $data['name']);
         });
