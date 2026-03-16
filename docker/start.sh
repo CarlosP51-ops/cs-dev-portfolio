@@ -2,6 +2,9 @@
 
 set -e
 
+# Créer le répertoire pour le socket PHP-FPM
+mkdir -p /var/run/php
+
 # Créer le .env si absent
 if [ ! -f /var/www/html/.env ]; then
     cp /var/www/html/.env.example /var/www/html/.env
@@ -21,8 +24,14 @@ for var in APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL \
     fi
 done
 
-# Générer la clé app si vide
+# Générer la clé app
 php artisan key:generate --force
+
+# Démarrer PHP-FPM
+php-fpm -D
+
+# Attendre que le socket soit prêt
+sleep 2
 
 # Migrations
 php artisan migrate --force 2>/dev/null || echo "Migration skipped - DB not ready"
@@ -35,12 +44,9 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Remplacer le port dans nginx.conf
+# Remplacer le port nginx si Railway fournit $PORT
 PORT=${PORT:-8080}
-sed -i "s|\${PORT:-8080}|${PORT}|g" /etc/nginx/sites-available/default
+sed -i "s|listen 8080;|listen ${PORT};|g" /etc/nginx/sites-available/default
 
-# Démarrer PHP-FPM
-php-fpm -D
-
-# Démarrer Nginx
+# Démarrer Nginx au premier plan
 nginx -g "daemon off;"

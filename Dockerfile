@@ -30,6 +30,9 @@ RUN npm install && npm run build
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Config PHP-FPM socket
+COPY docker/www.conf /usr/local/etc/php-fpm.d/www.conf
+
 # Config Nginx
 COPY docker/nginx.conf /etc/nginx/sites-available/default
 
