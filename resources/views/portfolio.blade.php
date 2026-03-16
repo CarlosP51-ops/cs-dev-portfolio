@@ -12,6 +12,7 @@
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -197,6 +198,54 @@
                 transform: translateY(0);
             }
         }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+        }
+
+        /* Scroll to top button */
+        #scrollToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        #scrollToTop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #scrollToTop:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
     </style>
 </head>
 
@@ -204,109 +253,179 @@
     <!-- Header -->
     @include('partials.header')
     <!-- Hero Section -->
-    <section id="accueil" class="hero-section min-h-screen flex items-center justify-center pt-16">
-        <div class="container mx-auto px-4 text-center text-white">
-            <div class="max-w-3xl mx-auto fade-in">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                    {{ $user->surname . ' Mahunan ' . $user->name }}
+    <section id="accueil" class="hero-section min-h-screen flex items-center justify-center pt-16 relative overflow-hidden">
+        <!-- Particles Background -->
+        <div id="particles-js" class="absolute inset-0"></div>
+        
+        <!-- Animated Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-pink-600/20 animate-gradient"></div>
+        
+        <div class="container mx-auto px-4 text-center text-white relative z-10">
+            <div class="max-w-4xl mx-auto fade-in">
+                <!-- Badge animé -->
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/20">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <span class="text-sm font-medium">Disponible pour de nouveaux projets</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                    Salut, je suis <br>
+                    <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        {{ $user->surname . ' ' . $user->name }}
+                    </span>
                 </h1>
-                <p class="text-xl md:text-2xl mb-8">Développeur Web </p>
-                <p class="text-lg mb-10 max-w-2xl mx-auto">Je transforme vos idées en applications et sites web
-                    élégants, performants et intuitifs, en alliant créativité et expertise technique.</p>
-                <a href="#projets"
-                    class="inline-block bg-primary text-white px-6 py-3 !rounded-button whitespace-nowrap font-medium hover:bg-primary/90 transition-transform hover:scale-105">
-                    Découvrez mes projets
-                </a>
+                
+                <div class="text-2xl md:text-3xl mb-8 h-12 flex items-center justify-center">
+                    <span class="mr-2">Je suis</span>
+                    <span id="typed-text" class="font-semibold text-blue-400"></span>
+                    <span class="animate-pulse">|</span>
+                </div>
+                
+                <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-gray-200 leading-relaxed">
+                    Je transforme vos idées en applications et sites web élégants, performants et intuitifs, 
+                    en alliant créativité et expertise technique.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="#projets"
+                        class="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-medium hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105">
+                        Découvrez mes projets
+                        <i class="ri-arrow-right-line group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="#contact"
+                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-full font-medium border border-white/20 hover:bg-white/20 transition-all duration-300">
+                        Me contacter
+                        <i class="ri-mail-line"></i>
+                    </a>
+                </div>
+                
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+                    <a href="#a-propos" class="flex flex-col items-center gap-2 text-white/70 hover:text-white transition">
+                        <span class="text-sm">Scroll</span>
+                        <i class="ri-arrow-down-line text-2xl"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
 
-    <section id="a-propos" class="py-20 bg-sky-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-16">À propos de moi</h2>
+    <section id="a-propos" class="py-20 bg-gradient-to-br from-sky-50 to-blue-100 relative overflow-hidden">
+        <!-- Decorative Elements -->
+        <div class="absolute top-0 right-0 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
+                    Qui suis-je ?
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">À propos de moi</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full"></div>
+            </div>
 
-            <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/3 flex justify-center">
-                    <div class="w-64 h-64 rounded-full overflow-hidden border-4 border-primary/20">
-                        <img src="{{ asset('storage/' . $user->photo_de_profil) }}"
-                            alt="{{ $user->surname }} {{ $user->name }}"
-                            class="w-full h-full object-cover object-top">
+            <div class="flex flex-col lg:flex-row items-center gap-12 mb-16">
+                <div class="lg:w-1/3 flex justify-center">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                        <div class="relative w-72 h-72 rounded-full overflow-hidden border-4 border-white shadow-2xl">
+                            <img src="{{ asset('storage/' . $user->photo_de_profil) }}"
+                                alt="{{ $user->surname }} {{ $user->name }}"
+                                class="w-full h-full object-cover object-top transform group-hover:scale-110 transition duration-500">
+                        </div>
                     </div>
                 </div>
 
-
-                <div class="md:w-2/3">
-                    <h3 class="text-2xl font-semibold mb-4">Bonjour, je suis {{ $user->surname }}</h3>
-                    <p class="text-gray-700 mb-6">
+                <div class="lg:w-2/3">
+                    <h3 class="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        Bonjour, je suis {{ $user->surname }}
+                    </h3>
+                    <p class="text-gray-700 mb-4 text-lg leading-relaxed">
                         Passionné par le développement web depuis plus de 3 ans, je conçois des expériences numériques
                         alliant esthétique et fonctionnalité. Basé à Cotonou, je suis à votre service pour donner vie à
                         vos projets digitaux.
                     </p>
-                    <p class="text-gray-700 mb-8">
-                        Après avoir obtenu ma License Professionel en Développement Web à l' Institut Nationnal des
-                        Sciences et Technologie Industriel de Lokossa, j'ai collaboré avec
-                        diverses startups et agences avant de me lancer en freelance. Cette expérience m'a permis de
-                        développer une approche holistique du développement, en tenant compte des besoins des
-                        utilisateurs et des objectifs commerciaux.
+                    <p class="text-gray-700 mb-8 text-lg leading-relaxed">
+                        Après avoir obtenu ma Licence Professionnelle en Développement Web à l'Institut National des
+                        Sciences et Technologie Industriel de Lokossa, j'ai collaboré avec diverses startups et agences 
+                        avant de me lancer en freelance.
                     </p>
 
-                    <div class="mb-8">
-                        <h4 class="text-lg font-medium mb-4">Mes compétences</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                            <div
-                                class="bg-white rounded-lg shadow-lg p-4 flex items-center transition-transform transform hover:scale-105">
-                                <div class="w-12 h-12 flex items-center justify-center text-primary mr-4">
-                                    <i class="ri-html5-line ri-lg"></i>
-                                </div>
-                                <span class="font-semibold">HTML/CSS</span>
-                            </div>
-                            <div
-                                class="bg-white rounded-lg shadow-lg p-4 flex items-center transition-transform transform hover:scale-105">
-                                <div class="w-12 h-12 flex items-center justify-center text-primary mr-4">
-                                    <i class="ri-javascript-line ri-lg"></i>
-                                </div>
-                                <span class="font-semibold">JavaScript</span>
-                            </div>
-                            <div
-                                class="bg-white rounded-lg shadow-lg p-4 flex items-center transition-transform transform hover:scale-105">
-                                <div class="w-12 h-12 flex items-center justify-center text-primary mr-4">
-                                    <i class="ri-reactjs-line ri-lg"></i>
-                                </div>
-                                <span class="font-semibold">React</span>
-                            </div>
-                            <div
-                                class="bg-white rounded-lg shadow-lg p-4 flex items-center transition-transform transform hover:scale-105">
-                                <div class="w-12 h-12 flex items-center justify-center text-primary mr-4">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div class="text-3xl font-bold text-blue-600 mb-1 counter" data-target="3">0</div>
+                            <div class="text-sm text-gray-600">Ans d'expérience</div>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div class="text-3xl font-bold text-purple-600 mb-1 counter" data-target="{{ $projets->count() }}">0</div>
+                            <div class="text-sm text-gray-600">Projets réalisés</div>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div class="text-3xl font-bold text-pink-600 mb-1 counter" data-target="15">0</div>
+                            <div class="text-sm text-gray-600">Clients satisfaits</div>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div class="text-3xl font-bold text-indigo-600 mb-1 counter" data-target="100">0</div>
+                            <div class="text-sm text-gray-600">% Engagement</div>
+                        </div>
+                    </div>
 
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                            <i class="ri-code-box-line text-blue-600"></i>
+                            Mes compétences
+                        </h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-12 h-12 flex items-center justify-center text-orange-600 bg-orange-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-html5-line text-2xl"></i>
+                                </div>
+                                <span class="font-semibold text-gray-700">HTML/CSS</span>
+                            </div>
+                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-12 h-12 flex items-center justify-center text-yellow-600 bg-yellow-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-javascript-line text-2xl"></i>
+                                </div>
+                                <span class="font-semibold text-gray-700">JavaScript</span>
+                            </div>
+                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-12 h-12 flex items-center justify-center text-cyan-600 bg-cyan-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-reactjs-line text-2xl"></i>
+                                </div>
+                                <span class="font-semibold text-gray-700">React</span>
+                            </div>
+                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-12 h-12 flex items-center justify-center text-red-600 bg-red-50 rounded-lg group-hover:scale-110 transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6 h-6">
-                                        <path fill="#FF2D20"
-                                            d="M141.7 51.6L0 256l141.7 204.4h228.6L512 256 370.3 51.6H141.7zm28.2 28.3h171.8l100 177.8-100 177.8H169.9L69.9 256l100-177.8z" />
+                                        <path fill="currentColor" d="M141.7 51.6L0 256l141.7 204.4h228.6L512 256 370.3 51.6H141.7zm28.2 28.3h171.8l100 177.8-100 177.8H169.9L69.9 256l100-177.8z" />
                                     </svg>
                                 </div>
-                                <span class="font-semibold">Laravel</span>
+                                <span class="font-semibold text-gray-700">Laravel</span>
                             </div>
-
-                            <div
-                                class="bg-white rounded-lg shadow-lg p-4 flex items-center transition-transform transform hover:scale-105">
-                                <div class="w-12 h-12 flex items-center justify-center text-primary mr-4">
-                                    <i class="ri-node-js-line ri-lg"></i>
+                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-12 h-12 flex items-center justify-center text-green-600 bg-green-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-node-js-line text-2xl"></i>
                                 </div>
-                                <span class="font-semibold">Node.js</span>
+                                <span class="font-semibold text-gray-700">Node.js</span>
                             </div>
-                            <div
-                                class="bg-white rounded-lg shadow-lg p-4 flex items-center transition-transform transform hover:scale-105">
-                                <div class="w-12 h-12 flex items-center justify-center text-primary mr-4">
-                                    <i class="ri-palette-line ri-lg"></i>
+                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-12 h-12 flex items-center justify-center text-blue-600 bg-blue-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-palette-line text-2xl"></i>
                                 </div>
-                                <span class="font-semibold">Tailwind Css</span>
+                                <span class="font-semibold text-gray-700">Tailwind CSS</span>
                             </div>
                         </div>
                     </div>
 
                     <a href="#contact"
-                        class="inline-block bg-primary text-white px-5 py-2.5 !rounded-button whitespace-nowrap font-medium hover:bg-primary/90 transition-colors">
+                        class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105">
                         Contactez-moi
+                        <i class="ri-arrow-right-line"></i>
                     </a>
                 </div>
             </div>
@@ -608,7 +727,144 @@
     <!-- Footer -->
     @include('partials.footer')
 
+    <!-- Scroll to Top Button -->
+    <div id="scrollToTop">
+        <i class="ri-arrow-up-line text-2xl"></i>
+    </div>
+
     <!-- Scripts -->
+    <script>
+        // Particles.js Configuration
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+
+        // Typing Effect
+        const typedTextElement = document.getElementById('typed-text');
+        const textArray = ['Développeur Web', 'Développeur Full Stack', 'Créateur d\'Expériences', 'Freelance'];
+        let textArrayIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function type() {
+            const currentText = textArray[textArrayIndex];
+            
+            if (isDeleting) {
+                typedTextElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typedTextElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentText.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                textArrayIndex = (textArrayIndex + 1) % textArray.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+
+        document.addEventListener('DOMContentLoaded', type);
+
+        // Counter Animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+
+            const updateCounter = () => {
+                current += increment;
+                if (current < target) {
+                    element.textContent = Math.floor(current);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target;
+                }
+            };
+
+            updateCounter();
+        }
+
+        // Trigger counter animation on scroll
+        const counters = document.querySelectorAll('.counter');
+        let counterAnimated = false;
+
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !counterAnimated) {
+                    counters.forEach(counter => animateCounter(counter));
+                    counterAnimated = true;
+                }
+            });
+        }, observerOptions);
+
+        const aboutSection = document.getElementById('a-propos');
+        if (aboutSection) {
+            counterObserver.observe(aboutSection);
+        }
+
+        // Scroll to Top Button
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+
     <script id="mobileMenuScript">
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
