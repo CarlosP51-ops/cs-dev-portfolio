@@ -44,9 +44,15 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Remplacer le port nginx si Railway fournit $PORT
+# Railway fournit $PORT, on l'utilise directement
 PORT=${PORT:-8080}
+echo "Démarrage Nginx sur le port $PORT"
+
+# Remplacer le port dans nginx.conf
 sed -i "s|listen 8080;|listen ${PORT};|g" /etc/nginx/sites-available/default
 
+# Tester la config nginx
+nginx -t
+
 # Démarrer Nginx au premier plan
-nginx -g "daemon off;"
+exec nginx -g "daemon off;"
