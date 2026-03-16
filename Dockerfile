@@ -1,7 +1,6 @@
-# Étape 1 : utiliser PHP 8.2 avec FPM
 FROM php:8.2-fpm
 
-# Installer les dépendances système nécessaires
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
@@ -9,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     libonig-dev \
     libpng-dev \
+    nginx \
     npm \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -16,21 +16,27 @@ RUN apt-get update && apt-get install -y \
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Copier tout le code du projet
 COPY . .
 
 # Installer les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Installer les dépendances Node (pour Tailwind/Vite)
-RUN npm install
-RUN npm run build
+# Installer les dépendances Node et builder les assets
+RUN npm install && npm run build
 
-# Exposer le port que Render va utiliser
-EXPOSE 10000
+# Permissions storage et cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Démarrer le serveur Laravel en utilisant la variable $PORT de Render
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+# Config Nginx
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+
+# Script de démarrage
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 8080
+
+CMD ["/start.sh"]
