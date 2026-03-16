@@ -21,18 +21,24 @@ for var in APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL \
     fi
 done
 
+# Nettoyer tous les caches avant de démarrer
+php artisan config:clear 2>/dev/null || true
+php artisan cache:clear 2>/dev/null || true
+php artisan route:clear 2>/dev/null || true
+php artisan view:clear 2>/dev/null || true
+
 # Générer la clé app
 php artisan key:generate --force
 
-# Démarrer PHP-FPM en TCP sur 127.0.0.1:9000
+# Corriger les permissions
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Démarrer PHP-FPM
 php-fpm -D
 
-# Attendre que PHP-FPM soit prêt
-sleep 3
-
-# Vérifier que PHP-FPM écoute bien
-echo "PHP-FPM status:"
-ss -tlnp | grep 9000 || netstat -tlnp | grep 9000 || echo "Port 9000 check skipped"
+# Attendre PHP-FPM
+sleep 2
 
 # Migrations
 php artisan migrate --force 2>/dev/null || echo "Migration skipped"
@@ -40,7 +46,7 @@ php artisan migrate --force 2>/dev/null || echo "Migration skipped"
 # Storage link
 php artisan storage:link --force 2>/dev/null || true
 
-# Cache
+# Reconstruire les caches
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -50,8 +56,6 @@ PORT=${PORT:-8080}
 echo "Démarrage Nginx sur le port $PORT"
 sed -i "s|listen 8080;|listen ${PORT};|g" /etc/nginx/sites-available/default
 
-# Tester nginx
 nginx -t
 
-# Démarrer Nginx
 exec nginx -g "daemon off;"
