@@ -428,11 +428,12 @@
 
         // GSAP Animations
         gsap.from('.form-section', {
-            y: 50,
+            y: 30,
             opacity: 0,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: 'power3.out'
+            duration: 0.5,
+            stagger: 0.08,
+            ease: 'power2.out',
+            clearProps: 'all'
         });
 
         document.addEventListener('DOMContentLoaded', function() {
