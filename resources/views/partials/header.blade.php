@@ -32,7 +32,7 @@
     </div>
 
     <!-- Menu Mobile caché -->
-    <nav id="mobileMenu" class="hidden bg-white shadow-md border-t border-gray-200 md:hidden">
+    <nav id="mobileMenu" class="mobile-menu-closed md:hidden bg-white shadow-md border-t border-gray-200">
         <div class="flex flex-col space-y-4 p-5">
             <a href="{{ route('projects.index') }}" class="font-medium text-gray-700 hover:text-blue-600">Accueil</a>
             <a href="#a-propos" class="font-medium text-gray-700 hover:text-blue-600">À propos</a>
@@ -40,6 +40,11 @@
             <a href="#contact" class="font-medium text-gray-700 hover:text-blue-600">Contact</a>
         </div>
     </nav>
+
+    <style>
+        .mobile-menu-closed { display: none; }
+        .mobile-menu-open { display: block; }
+    </style>
 </header>
 
 <!-- Ajouter un padding-top au body pour éviter que le contenu soit caché sous le header fixe -->
@@ -87,18 +92,18 @@
     const mobileMenu = document.getElementById("mobileMenu");
 
     mobileMenuBtn.addEventListener("click", () => {
-        const isOpen = !mobileMenu.classList.contains("hidden");
-        mobileMenu.classList.toggle("hidden");
-        // Changer l'icône burger/croix
-        mobileMenuBtn.innerHTML = isOpen
-            ? '<i class="ri-menu-line ri-lg"></i>'
-            : '<i class="ri-close-line ri-lg"></i>';
+        const isOpen = mobileMenu.classList.contains("mobile-menu-open");
+        mobileMenu.classList.toggle("mobile-menu-open", !isOpen);
+        mobileMenu.classList.toggle("mobile-menu-closed", isOpen);
+        mobileMenuBtn.innerHTML = !isOpen
+            ? '<i class="ri-close-line ri-lg"></i>'
+            : '<i class="ri-menu-line ri-lg"></i>';
     });
 
-    // Fermer le menu quand on clique sur un lien
     mobileMenu.querySelectorAll("a").forEach(link => {
         link.addEventListener("click", () => {
-            mobileMenu.classList.add("hidden");
+            mobileMenu.classList.remove("mobile-menu-open");
+            mobileMenu.classList.add("mobile-menu-closed");
             mobileMenuBtn.innerHTML = '<i class="ri-menu-line ri-lg"></i>';
         });
     });
