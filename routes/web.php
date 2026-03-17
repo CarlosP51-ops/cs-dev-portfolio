@@ -7,6 +7,7 @@ use App\Http\Controllers\ProjetController;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('/', function() { return redirect('/cs-dev/home'); });
 Route::get('/cs-dev/home',[AppController::class,'home'])->name('projects.index');
 Route::get('/cs-dev/projects',[AppController::class,'allProject'])->name('projects.all'); 
 Route::get('/cs-dev/project/create', [ProjetController::class, 'create'])->name('projects.create');
