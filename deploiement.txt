@@ -1,0 +1,541 @@
+================================================================================
+        DOCUMENTATION DE DEPLOIEMENT - CS DEV PORTFOLIO (Laravel 10)
+                        Plateforme : Railway.app
+================================================================================
+
+SOMMAIRE
+--------
+1. Présentation du projet
+2. Prérequis
+3. Fichiers créés pour le déploiement
+4. Processus de déploiement étape par étape
+5. Erreurs rencontrées et résolutions
+6. Variables d'environnement Railway
+7. Leçons apprises
+
+
+================================================================================
+1. PRÉSENTATION DU PROJET
+================================================================================
+
+Application    : Portfolio développeur (CS Dev Portfolio)
+Framework      : Laravel 10
+Base de données: MySQL
+Assets         : Vite + TailwindCSS
+Hébergement    : Railway.app (gratuit - 5$ de crédit offert)
+Repository     : https://github.com/CarlosP51-ops/cs-dev-portfolio
+
+L'application est un portfolio professionnel avec :
+- Affichage de projets avec filtres par technologie
+- Section admin (dashboard, gestion projets, profil)
+- Formulaire de contact avec envoi d'email
+- Suivi des visiteurs
+
+
+================================================================================
+2. PRÉREQUIS
+================================================================================
+
+Avant de déployer sur Railway, il faut :
+
+1. Un compte GitHub avec le code source poussé
+2. Un compte Railway (inscription via GitHub sur railway.app)
+3. Le code source doit contenir un Dockerfile valide
+4. Les migrations Laravel doivent être à jour
+5. Les seeders doivent être prêts (données initiales)
+
+
+================================================================================
+3. FICHIERS CRÉÉS POUR LE DÉPLOIEMENT
+================================================================================
+
+Trois fichiers ont été créés dans un dossier "docker/" à la racine,
+plus un fichier de configuration Railway.
+
+--------------------------------------------------------------------------------
+FICHIER 1 : Dockerfile (à la racine)
+--------------------------------------------------------------------------------
+
+Rôle : Définit comment construire l'image Docker de l'application.
+       C'est le fichier principal que Railway lit pour savoir comment
+       préparer l'environnement d'exécution.
+
+Contenu et importance de chaque section :
+
+    FROM php:8.2-fpm
+    → Utilise l'image officielle PHP 8.2 avec PHP-FPM (FastCGI Process Manager).
+      PHP-FPM est nécessaire pour faire communiquer Nginx avec PHP.
+
+    RUN apt-get install -y ... nginx npm
+    → Installe les dépendances système :
+      - nginx       : serveur web qui reçoit les requêtes HTTP
+      - npm         : pour compiler les assets (Vite/TailwindCSS)
+      - libzip-dev, libpng-dev, etc. : extensions PHP nécessaires à Laravel
+
+    docker-php-ext-install pdo_mysql mbstring zip exif pcntl gd
+    → Active les extensions PHP :
+      - pdo_mysql : connexion à MySQL
+      - mbstring  : manipulation de chaînes multi-octets
+      - gd        : traitement d'images
+      - zip       : compression de fichiers
+
+    COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+    → Installe Composer (gestionnaire de dépendances PHP) depuis
+      une image officielle. Technique multi-stage build.
+
+    RUN composer install --no-dev --optimize-autoloader
+    → Installe les dépendances PHP en mode production (sans les outils
+      de développement) et optimise l'autoloader pour de meilleures
+      performances.
+
+    RUN npm install && npm run build
+    → Installe les dépendances JavaScript et compile les assets
+      (CSS, JS) pour la production via Vite.
+
+    RUN chown -R www-data:www-data /var/www/html/storage ...
+    → Donne les permissions correctes à l'utilisateur www-data
+      (utilisateur Nginx/PHP-FPM) sur les dossiers storage et cache.
+      CRITIQUE : sans ça, Laravel ne peut pas écrire ses logs,
+      sessions et fichiers cache → erreurs 500.
+
+    COPY docker/www.conf /usr/local/etc/php-fpm.d/www.conf
+    → Copie la configuration PHP-FPM personnalisée.
+
+    COPY docker/nginx.conf /etc/nginx/sites-available/default
+    → Copie la configuration Nginx.
+
+    COPY docker/start.sh /start.sh
+    → Copie le script de démarrage.
+
+    EXPOSE 8080
+    CMD ["/start.sh"]
+    → Expose le port 8080 et lance le script de démarrage.
+
+--------------------------------------------------------------------------------
+FICHIER 2 : docker/nginx.conf
+--------------------------------------------------------------------------------
+
+Rôle : Configure le serveur web Nginx pour servir l'application Laravel.
+
+Contenu :
+
+    server {
+        listen 8080;
+        server_name _;
+        root /var/www/html/public;    ← IMPORTANT : pointe vers /public
+        index index.php index.html;
+
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        location ~ \.php$ {
+            fastcgi_pass 127.0.0.1:9000;    ← Communication avec PHP-FPM
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+            fastcgi_read_timeout 300;
+        }
+    }
+
+Points importants :
+- root pointe vers /public (pas la racine du projet) car Laravel
+  expose uniquement ce dossier publiquement pour des raisons de sécurité.
+- fastcgi_pass 127.0.0.1:9000 : Nginx délègue l'exécution PHP à PHP-FPM
+  via TCP sur le port 9000. On a d'abord essayé un socket Unix
+  (unix:/var/run/php/php8.2-fpm.sock) mais ça causait des erreurs 502.
+  Le TCP est plus fiable dans un conteneur Docker.
+- try_files permet le routing Laravel : toutes les URLs non trouvées
+  sont redirigées vers index.php qui est le point d'entrée de Laravel.
+
+--------------------------------------------------------------------------------
+FICHIER 3 : docker/www.conf
+--------------------------------------------------------------------------------
+
+Rôle : Configure PHP-FPM (le processus qui exécute le code PHP).
+
+Contenu :
+
+    [www]
+    user = www-data
+    group = www-data
+    listen = 127.0.0.1:9000    ← Écoute en TCP (pas socket Unix)
+    pm = dynamic
+    pm.max_children = 5
+    pm.start_servers = 2
+    pm.min_spare_servers = 1
+    pm.max_spare_servers = 3
+
+Points importants :
+- listen = 127.0.0.1:9000 : PHP-FPM écoute sur le port 9000 en local.
+  Doit correspondre exactement à fastcgi_pass dans nginx.conf.
+- pm = dynamic : gestion dynamique des processus PHP selon la charge.
+- user/group = www-data : même utilisateur que Nginx pour les permissions.
+
+--------------------------------------------------------------------------------
+FICHIER 4 : docker/start.sh
+--------------------------------------------------------------------------------
+
+Rôle : Script exécuté au démarrage du conteneur. Orchestre tous les
+       services et prépare l'application avant de lancer Nginx.
+
+Contenu et importance de chaque étape :
+
+    # Créer le .env si absent
+    if [ ! -f /var/www/html/.env ]; then
+        cp /var/www/html/.env.example /var/www/html/.env
+    fi
+    → Le fichier .env n'est pas dans Git (ignoré pour sécurité).
+      On le crée depuis .env.example au démarrage.
+
+    # Injecter les variables Railway dans le .env
+    for var in APP_NAME APP_ENV DB_HOST DB_PORT ...
+    → Railway fournit les variables d'environnement (DB_HOST, DB_PORT, etc.)
+      via le système de variables. Ce bloc les injecte dans le .env
+      pour que Laravel puisse les lire.
+
+    # Nettoyer les caches
+    php artisan config:clear
+    php artisan cache:clear
+    php artisan route:clear
+    php artisan view:clear
+    → Nettoie les anciens caches qui pourraient contenir des valeurs
+      incorrectes du déploiement précédent.
+
+    # Générer la clé app
+    php artisan key:generate --force
+    → Génère APP_KEY utilisée pour le chiffrement des sessions et cookies.
+      --force permet de regénérer même si une clé existe déjà.
+
+    # Corriger les permissions
+    chown -R www-data:www-data /var/www/html/storage ...
+    chmod -R 775 /var/www/html/storage ...
+    → S'assure que PHP-FPM peut écrire dans storage et bootstrap/cache.
+
+    # Démarrer PHP-FPM
+    php-fpm -D
+    sleep 2
+    → Lance PHP-FPM en arrière-plan. Le sleep 2 laisse le temps à
+      PHP-FPM de démarrer avant que Nginx essaie de le contacter.
+
+    # Migrations + Seeders
+    php artisan migrate --force
+    php artisan db:seed --force
+    → Crée toutes les tables en base de données et insère les données
+      initiales (utilisateur admin, technologies).
+      --force est nécessaire en production pour bypasser la confirmation.
+
+    # Reconstruire les caches
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+    → Optimise les performances en mettant en cache la config,
+      les routes et les vues compilées.
+
+    # Adapter le port Railway
+    PORT=${PORT:-8080}
+    sed -i "s|listen 8080;|listen ${PORT};|g" /etc/nginx/sites-available/default
+    → Railway assigne un port dynamique via $PORT. On remplace le port
+      dans nginx.conf au moment du démarrage.
+
+    # Lancer Nginx
+    exec nginx -g "daemon off;"
+    → Lance Nginx au premier plan (daemon off). C'est important car
+      Docker a besoin d'un processus au premier plan pour rester actif.
+      exec remplace le processus shell par Nginx.
+
+--------------------------------------------------------------------------------
+FICHIER 5 : railway.json (à la racine)
+--------------------------------------------------------------------------------
+
+Rôle : Indique à Railway comment builder et déployer l'application.
+
+Contenu final :
+
+    {
+      "$schema": "https://railway.app/railway.schema.json",
+      "build": {
+        "builder": "DOCKERFILE",
+        "dockerfilePath": "Dockerfile"
+      },
+      "deploy": {
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 3
+      }
+    }
+
+Points importants :
+- builder DOCKERFILE : dit à Railway d'utiliser notre Dockerfile
+  plutôt que Nixpacks (son système de build automatique).
+- restartPolicyType ON_FAILURE : redémarre le conteneur en cas de crash.
+- Le healthcheck a été retiré car il causait des faux échecs pendant
+  que l'application démarrait (migrations, seeders prennent du temps).
+
+
+================================================================================
+4. PROCESSUS DE DÉPLOIEMENT ÉTAPE PAR ÉTAPE
+================================================================================
+
+ÉTAPE 1 : Préparer le code et pousser sur GitHub
+-------------------------------------------------
+    git add -A
+    git commit -m "Add Railway deployment config"
+    git push origin master
+
+ÉTAPE 2 : Créer le projet sur Railway
+--------------------------------------
+1. Aller sur railway.app
+2. Cliquer "New Project"
+3. Choisir "Deploy from GitHub repo"
+4. Sélectionner le repository cs-dev-portfolio
+5. Railway détecte automatiquement le Dockerfile
+
+ÉTAPE 3 : Ajouter le service MySQL
+------------------------------------
+1. Dans le projet Railway, cliquer "+ New"
+2. Choisir "Database" → "MySQL"
+3. Railway crée le service MySQL automatiquement
+
+ÉTAPE 4 : Configurer les variables d'environnement
+----------------------------------------------------
+Dans le service Laravel → onglet "Variables", ajouter :
+
+    APP_ENV=production
+    APP_DEBUG=false
+    APP_URL=https://[votre-domaine].railway.app
+    DB_CONNECTION=mysql
+    DB_HOST=${{MySQL.MYSQLHOST}}
+    DB_PORT=${{MySQL.MYSQLPORT}}
+    DB_DATABASE=${{MySQL.MYSQLDATABASE}}
+    DB_USERNAME=${{MySQL.MYSQLUSER}}
+    DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+    SESSION_DRIVER=file
+    CACHE_DRIVER=file
+
+Note : La syntaxe ${{MySQL.MYSQLHOST}} est propre à Railway.
+       Elle référence automatiquement les variables du service MySQL
+       sans avoir à copier-coller les valeurs manuellement.
+
+ÉTAPE 5 : Générer le domaine public
+-------------------------------------
+Dans le service Laravel → "Settings" → "Networking"
+→ Cliquer "Generate Domain"
+Railway assigne un domaine gratuit : xxx.railway.app
+
+ÉTAPE 6 : Vérifier le déploiement
+-----------------------------------
+Surveiller les logs dans Railway → service Laravel → onglet "Logs"
+Chercher ces lignes de succès :
+    - "INFO Exécution des migrations" → tables créées
+    - "fpm est en cours d'exécution" → PHP-FPM actif
+    - "Démarrage Nginx sur le port XXXX" → Nginx actif
+
+
+================================================================================
+5. ERREURS RENCONTRÉES ET RÉSOLUTIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+ERREUR 1 : file_get_contents(.env) : Impossible d'ouvrir le flux
+--------------------------------------------------------------------------------
+Message : "KeyGenerateCommand.php ligne 100 : file_get_contents(/var/www/html/.env)"
+
+Cause : Le fichier .env n'existe pas dans le conteneur car il est
+        dans .gitignore et n'est donc pas poussé sur GitHub.
+
+Résolution : Dans start.sh, créer le .env depuis .env.example au démarrage :
+
+    if [ ! -f /var/www/html/.env ]; then
+        cp /var/www/html/.env.example /var/www/html/.env
+    fi
+
+--------------------------------------------------------------------------------
+ERREUR 2 : SQLSTATE[HY000] [2002] getaddrinfo pour mysqlcsdevportfolio02
+--------------------------------------------------------------------------------
+Message : "php_network_getaddresses: getaddrinfo pour mysqlcsdevportfolio02 failed"
+
+Cause : Le DB_HOST dans .env.example pointait vers l'ancien serveur
+        MySQL local (mysqlcsdevportfolio02) au lieu du service MySQL Railway.
+
+Résolution : Configurer les variables DB dans Railway avec les références
+             automatiques au service MySQL :
+
+    DB_HOST=${{MySQL.MYSQLHOST}}
+    DB_PORT=${{MySQL.MYSQLPORT}}
+    DB_DATABASE=${{MySQL.MYSQLDATABASE}}
+    DB_USERNAME=${{MySQL.MYSQLUSER}}
+    DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+
+    Et dans start.sh, injecter ces variables dans le .env :
+
+    for var in DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD; do
+        value=$(printenv "$var" 2>/dev/null || true)
+        if [ -n "$value" ]; then
+            sed -i "s|^${var}=.*|${var}=${value}|" /var/www/html/.env
+        fi
+    done
+
+--------------------------------------------------------------------------------
+ERREUR 3 : GET /index.php → 404
+--------------------------------------------------------------------------------
+Message : '127.0.0.1 - "GET /index.php" 404'
+
+Cause 1 : Nginx utilisait un socket Unix pour communiquer avec PHP-FPM
+          mais le socket n'était pas créé au bon endroit.
+
+Résolution 1 : Passer de socket Unix à TCP dans www.conf et nginx.conf :
+
+    # www.conf
+    listen = 127.0.0.1:9000    ← TCP au lieu de unix:/var/run/php/...
+
+    # nginx.conf
+    fastcgi_pass 127.0.0.1:9000;    ← TCP au lieu de unix:...
+
+Cause 2 : Le healthcheck Railway frappait /index.php directement
+          au lieu de / ce qui retournait 404.
+
+Résolution 2 : Retirer le healthcheck du railway.json pour éviter
+               les faux échecs pendant le démarrage.
+
+--------------------------------------------------------------------------------
+ERREUR 4 : 502 Bad Gateway
+--------------------------------------------------------------------------------
+Message : "502 Bad Gateway nginx"
+
+Cause : Nginx démarrait mais PHP-FPM n'était pas encore prêt ou
+        le socket de communication était incorrect.
+
+Résolution : Ajouter un délai après le démarrage de PHP-FPM et
+             vérifier qu'il écoute bien sur le port 9000 :
+
+    php-fpm -D
+    sleep 2    ← Attendre que PHP-FPM soit prêt
+
+    # Vérification dans les logs :
+    ss -tlnp | grep 9000
+    # Résultat attendu : LISTEN *:9000
+
+--------------------------------------------------------------------------------
+ERREUR 5 : Conteneur qui redémarre en boucle
+--------------------------------------------------------------------------------
+Message : "Conteneur d'arrêt" / "Conteneur de démarrage" en boucle
+
+Cause : Le cache Laravel contenait des valeurs incorrectes du déploiement
+        précédent, causant un crash au démarrage.
+
+Résolution : Nettoyer tous les caches AVANT de les reconstruire :
+
+    # Nettoyer d'abord
+    php artisan config:clear
+    php artisan cache:clear
+    php artisan route:clear
+    php artisan view:clear
+
+    # Puis reconstruire
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+
+--------------------------------------------------------------------------------
+ERREUR 6 : 404 sur la page d'accueil (domaine Railway)
+--------------------------------------------------------------------------------
+Message : "404 Introuvable"
+
+Cause : L'application n'avait pas de route définie pour "/" (racine).
+        La page d'accueil était sur "/cs-dev/home" mais Railway
+        ouvre le domaine sur "/".
+
+Résolution : Ajouter une redirection dans routes/web.php :
+
+    Route::get('/', function() {
+        return redirect('/cs-dev/home');
+    });
+
+--------------------------------------------------------------------------------
+ERREUR 7 : 500 Erreur serveur
+--------------------------------------------------------------------------------
+Message : "500 Erreur serveur"
+
+Cause : La base de données était vide. Le controller AppController
+        fait User::find(1) pour récupérer le profil. Sans données
+        initiales, $user est null et la vue plante.
+
+Résolution : Lancer les seeders au démarrage dans start.sh :
+
+    php artisan migrate --force
+    php artisan db:seed --force    ← Insère l'utilisateur et les technologies
+
+    Les seeders concernés :
+    - UserSeeder    : crée l'utilisateur administrateur
+    - TechnologySeeder : insère les technologies (PHP, Laravel, etc.)
+
+
+================================================================================
+6. VARIABLES D'ENVIRONNEMENT RAILWAY
+================================================================================
+
+Variables à configurer dans Railway → service Laravel → "Variables" :
+
+    APP_NAME=Portfolio
+    APP_ENV=production
+    APP_DEBUG=false                          ← true uniquement pour déboguer
+    APP_URL=https://[domaine].railway.app
+
+    DB_CONNECTION=mysql
+    DB_HOST=${{MySQL.MYSQLHOST}}             ← Référence automatique Railway
+    DB_PORT=${{MySQL.MYSQLPORT}}
+    DB_DATABASE=${{MySQL.MYSQLDATABASE}}
+    DB_USERNAME=${{MySQL.MYSQLUSER}}
+    DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+
+    SESSION_DRIVER=file
+    CACHE_DRIVER=file
+    QUEUE_CONNECTION=sync
+
+Note sur APP_DEBUG :
+    - true  : affiche les erreurs détaillées dans le navigateur (utile pour déboguer)
+    - false : affiche une page d'erreur générique (obligatoire en production)
+
+
+================================================================================
+7. LEÇONS APPRISES
+================================================================================
+
+1. TOUJOURS vérifier que .env.example est à jour
+   Le .env est ignoré par Git. En production, l'application crée son .env
+   depuis .env.example. Si .env.example contient de vieilles valeurs
+   (comme un ancien DB_HOST), l'application ne pourra pas se connecter.
+
+2. Les permissions sont critiques dans Docker
+   PHP-FPM tourne sous l'utilisateur www-data. Si storage/ et
+   bootstrap/cache/ n'appartiennent pas à www-data, Laravel ne peut
+   pas écrire ses logs, sessions et caches → erreurs 500 silencieuses.
+
+3. Socket Unix vs TCP pour PHP-FPM
+   Le socket Unix est plus performant mais plus fragile dans Docker
+   (problèmes de permissions, timing de création). Le TCP 127.0.0.1:9000
+   est plus simple et fiable pour un déploiement conteneurisé.
+
+4. L'ordre des opérations dans start.sh est important
+   PHP-FPM doit démarrer AVANT Nginx. Les migrations doivent tourner
+   AVANT de mettre en cache la config. Le cache doit être nettoyé
+   AVANT d'être reconstruit.
+
+5. Les seeders sont essentiels
+   Une application qui dépend de données initiales (utilisateur admin,
+   listes de référence) doit lancer ses seeders au premier déploiement.
+   Sans ça, l'application démarre mais plante dès la première requête.
+
+6. Railway et les variables d'environnement
+   Railway injecte les variables dans le conteneur via l'environnement
+   système (printenv). Laravel lit son .env. Il faut donc un pont
+   entre les deux : le script start.sh qui copie les variables
+   système dans le fichier .env.
+
+7. Ne jamais committer le .env avec des credentials
+   Le fichier .env contenait des credentials email en clair. Il a été
+   nettoyé avant le push. Toujours vérifier que .env est dans .gitignore
+   et ne contient pas de données sensibles dans le repository.
+
+================================================================================
+                        FIN DE LA DOCUMENTATION
+================================================================================
