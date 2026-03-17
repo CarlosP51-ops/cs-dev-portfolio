@@ -40,8 +40,9 @@ php-fpm -D
 # Attendre PHP-FPM
 sleep 2
 
-# Migrations
+# Migrations + Seeders
 php artisan migrate --force 2>/dev/null || echo "Migration skipped"
+php artisan db:seed --force 2>/dev/null || echo "Seeder skipped"
 
 # Storage link
 php artisan storage:link --force 2>/dev/null || true
