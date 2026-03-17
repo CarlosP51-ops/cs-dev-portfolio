@@ -59,11 +59,11 @@
             <div class="footer-col bg-white/10 p-4 rounded-xl shadow-lg">
                 <h3 class="text-lg font-semibold mb-4 text-white">Newsletter</h3>
                 <p class="text-gray-300 mb-4 text-sm">Recevez mes derniers articles et conseils directement dans votre boîte mail.</p>
-                <form class="flex gap-2">
+                <form class="flex gap-2 w-full">
                     <input type="email" placeholder="Votre email"
-                        class="flex-grow px-4 py-2 rounded-l-md bg-white/20 border border-white/30 text-white placeholder-gray-200 focus:ring-2 focus:ring-yellow-300 focus:outline-none">
+                        class="min-w-0 flex-1 px-4 py-2 rounded-l-md bg-white/20 border border-white/30 text-white placeholder-gray-200 focus:ring-2 focus:ring-yellow-300 focus:outline-none">
                     <button type="submit"
-                        class="bg-yellow-300 px-4 py-2 rounded-r-md font-medium text-gray-900 hover:bg-yellow-400 transition transform hover:scale-105">
+                        class="flex-shrink-0 bg-yellow-300 px-4 py-2 rounded-r-md font-medium text-gray-900 hover:bg-yellow-400 transition transform hover:scale-105">
                         <i class="ri-send-plane-fill"></i>
                     </button>
                 </form>

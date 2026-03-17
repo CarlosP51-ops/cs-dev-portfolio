@@ -1,5 +1,5 @@
 <header id="mainHeader" class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md shadow-sm z-50">
-    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between" style="max-width:100%; overflow-x:hidden;">
         <!-- Logo -->
         <a href="#" class="text-4xl font-bold tracking-wide text-blue-600 hover:text-blue-700 transition-colors"
             style="font-family: 'Great Vibes', cursive;">

@@ -42,8 +42,14 @@
             content: "\f3c2";
         }
 
+        html {
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            max-width: 100%;
         }
 
         .hero-section {

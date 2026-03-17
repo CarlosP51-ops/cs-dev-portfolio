@@ -26,8 +26,10 @@
         }
     </script>
     <style>
-        body {
+        html, body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            max-width: 100%;
         }
 
         /* Hero gradient background */
@@ -153,7 +155,7 @@
         /* Grid animations */
         .grid-view {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
             gap: 2rem;
         }
 
@@ -166,11 +168,23 @@
         .list-view .project-card {
             display: flex;
             flex-direction: row;
+            flex-wrap: wrap;
         }
 
         .list-view .project-card .project-image {
-            width: 300px;
+            width: 100%;
+            max-width: 300px;
             height: 200px;
+        }
+
+        @media (max-width: 640px) {
+            .list-view .project-card {
+                flex-direction: column;
+            }
+            .list-view .project-card .project-image {
+                max-width: 100%;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -180,8 +194,8 @@
     @include('partials.header')
 
     <!-- Hero Section -->
-    <section class="hero-gradient py-20 relative mt-16">
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <section class="hero-gradient py-20 relative mt-16" style="overflow-x:hidden;">
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
             <div class="text-center text-white">
                 <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/30">
                     <i class="ri-folder-line"></i>
@@ -219,7 +233,7 @@
         </div>
     </section>
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-12">
+    <main class="max-w-7xl mx-auto px-4 py-12">
         
         <!-- Search & Filters -->
         <div class="mb-12">
