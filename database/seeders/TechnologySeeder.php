@@ -27,6 +27,6 @@ class TechnologySeeder extends Seeder
             ['name' => 'MongoDB', 'type' => 'database'],
         ];
 
-        DB::table('technologies')->insert($technologies);
+        DB::table('technologies')->insertOrIgnore($technologies);
     }
 }
