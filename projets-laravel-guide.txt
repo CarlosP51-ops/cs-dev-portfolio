@@ -1,0 +1,821 @@
+================================================================================
+        GUIDE DES PROJETS LARAVEL 11 POUR GAGNER EN EXPÉRIENCE
+================================================================================
+
+SOMMAIRE
+--------
+1.  Blog multi-auteurs
+2.  Système de gestion de tâches (Trello-like)
+3.  Plateforme e-commerce complète
+4.  Réseau social de développeurs
+5.  Plateforme de cours en ligne
+6.  API REST + SPA (Laravel 11 + React)
+7.  Bases de données recommandées par projet
+8.  Ordre de réalisation recommandé
+
+
+================================================================================
+1. BLOG MULTI-AUTEURS
+================================================================================
+
+Base de données : MySQL
+Niveau : Intermédiaire
+
+FONCTIONNALITÉS
+---------------
+- Authentification complète (register, login, email verification, password reset)
+- 3 rôles : admin (tout gérer), auteur (ses articles), lecteur (commenter)
+- Articles avec TinyMCE, slug auto-généré, image de couverture
+- Système de tags et catégories avec filtres
+- Commentaires avec modération (approuver/rejeter)
+- Newsletter : abonnement email + envoi groupé via Queue
+- Tableau de bord auteur avec stats (vues, likes, commentaires)
+- Recherche full-text avec Laravel Scout
+
+CONCEPTS LARAVEL COUVERTS
+--------------------------
+- Spatie Laravel Permission (rôles/permissions)
+- Policies et Gates
+- Queues et Jobs (envoi emails en arrière-plan)
+- Events et Listeners (ex: ArticlePublié → notifier abonnés)
+- Observers (générer slug automatiquement)
+- Scopes Eloquent (articles publiés, populaires)
+
+STRUCTURE BASE DE DONNÉES
+--------------------------
+
+users
+    id
+    name
+    email
+    password
+    role
+    avatar
+    bio
+    timestamps
+
+articles
+    id
+    user_id (FK)
+    category_id (FK)
+    title
+    slug (unique)
+    content (longText)
+    excerpt (text)
+    cover_image
+    status (enum: draft / published / archived)
+    views_count (unsignedInt default 0)
+    published_at (timestamp nullable)
+    timestamps
+
+categories
+    id
+    name
+    slug (unique)
+    description
+    timestamps
+
+tags
+    id
+    name
+    slug (unique)
+    timestamps
+
+article_tag (pivot)
+    article_id (FK)
+    tag_id (FK)
+
+comments
+    id
+    article_id (FK)
+    user_id (FK)
+    parent_id (FK nullable → réponses imbriquées)
+    content (text)
+    status (enum: pending / approved / rejected)
+    timestamps
+
+subscribers
+    id
+    email (unique)
+    token (string)
+    confirmed_at (timestamp nullable)
+    timestamps
+
+notifications (table Laravel native)
+    id (uuid)
+    type
+    notifiable_type
+    notifiable_id
+    data (json)
+    read_at (timestamp nullable)
+    timestamps
+
+
+================================================================================
+2. SYSTÈME DE GESTION DE TÂCHES (TRELLO-LIKE)
+================================================================================
+
+Base de données : MySQL + Redis
+Niveau : Intermédiaire
+
+FONCTIONNALITÉS
+---------------
+- Workspaces (espaces de travail par équipe)
+- Boards (tableaux), colonnes personnalisables, cartes
+- Drag & drop des cartes entre colonnes (SortableJS)
+- Assignation de membres, deadlines, labels colorés
+- Checklist dans chaque carte, pièces jointes
+- Notifications en temps réel quand une carte est modifiée
+- Historique d'activité par carte et par board
+- Invitations par email à rejoindre un workspace
+
+CONCEPTS LARAVEL COUVERTS
+--------------------------
+- Livewire (composants réactifs sans écrire d'API)
+- Laravel Echo + Pusher (WebSockets temps réel)
+- Policies (qui peut modifier quel board)
+- Notifications (database + email + broadcast)
+- Soft Deletes (archiver sans supprimer)
+- Eloquent relationships complexes (morphMany pour activités)
+
+STRUCTURE BASE DE DONNÉES
+--------------------------
+
+workspaces
+    id
+    name
+    slug
+    owner_id (FK)
+    description
+    timestamps
+
+workspace_user (pivot)
+    workspace_id (FK)
+    user_id (FK)
+    role (enum: owner / admin / member)
+
+boards
+    id
+    workspace_id (FK)
+    name
+    description
+    color (string)
+    is_archived (boolean default false)
+    timestamps
+
+columns
+    id
+    board_id (FK)
+    name
+    position (unsignedSmallInt)
+    timestamps
+
+cards
+    id
+    column_id (FK)
+    title
+    description (text nullable)
+    position (unsignedSmallInt)
+    due_date (date nullable)
+    is_completed (boolean default false)
+    deleted_at (soft delete)
+    timestamps
+
+card_user (pivot → assignations)
+    card_id (FK)
+    user_id (FK)
+
+labels
+    id
+    board_id (FK)
+    name
+    color (string)
+
+card_label (pivot)
+    card_id (FK)
+    label_id (FK)
+
+checklists
+    id
+    card_id (FK)
+    title
+    timestamps
+
+checklist_items
+    id
+    checklist_id (FK)
+    content
+    is_done (boolean default false)
+    position (unsignedSmallInt)
+    timestamps
+
+attachments
+    id
+    card_id (FK)
+    user_id (FK)
+    filename
+    path
+    mime_type
+    size (unsignedBigInt)
+    timestamps
+
+activities (polymorphique → sur card, board, workspace)
+    id
+    user_id (FK)
+    subject_type
+    subject_id
+    action (string)
+    data (json nullable)
+    timestamps
+
+
+================================================================================
+3. PLATEFORME E-COMMERCE COMPLÈTE
+================================================================================
+
+Base de données : MySQL + Redis
+Niveau : Avancé
+
+FONCTIONNALITÉS
+---------------
+- Catalogue avec catégories, filtres prix/note/stock
+- Panier persistant (session + base de données pour connectés)
+- Checkout avec intégration Stripe (paiement carte + webhooks)
+- Gestion commandes : en attente, confirmée, expédiée, livrée
+- Factures PDF générées automatiquement (Laravel DomPDF)
+- Emails transactionnels (confirmation commande, expédition)
+- Gestion stock avec alertes quand stock bas
+- Panel admin : produits, commandes, clients, revenus
+- Système d'avis et notes sur les produits
+- Codes promo avec règles (%, montant fixe, usage limité)
+
+CONCEPTS LARAVEL COUVERTS
+--------------------------
+- Stripe API + Webhooks (écouter les événements paiement)
+- Jobs et Queues (emails, génération PDF en arrière-plan)
+- Laravel DomPDF (génération factures)
+- Cache (produits populaires, catégories)
+- Transactions DB (décrémenter stock + créer commande atomiquement)
+- Resource Controllers + Form Requests
+
+STRUCTURE BASE DE DONNÉES
+--------------------------
+
+users
+    id, name, email, password, phone (nullable), timestamps
+
+addresses
+    id
+    user_id (FK)
+    label (string → "Domicile", "Bureau")
+    firstname, lastname, street, city, zip, country
+    is_default (boolean)
+    timestamps
+
+categories
+    id
+    parent_id (FK nullable → sous-catégories)
+    name, slug, image, description
+    timestamps
+
+products
+    id
+    category_id (FK)
+    name
+    slug (unique)
+    description (longText)
+    price (decimal 10,2)
+    compare_price (decimal nullable → prix barré)
+    stock (unsignedInt default 0)
+    sku (string unique)
+    weight (decimal nullable)
+    is_active (boolean default true)
+    deleted_at (soft delete)
+    timestamps
+
+product_images
+    id
+    product_id (FK)
+    path
+    alt (string nullable)
+    is_primary (boolean default false)
+    position (unsignedSmallInt)
+    timestamps
+
+carts
+    id
+    user_id (FK nullable → panier invité)
+    session_id (string nullable)
+    timestamps
+
+cart_items
+    id
+    cart_id (FK)
+    product_id (FK)
+    quantity (unsignedSmallInt)
+    price (decimal 10,2 → prix au moment de l'ajout)
+    timestamps
+
+orders
+    id
+    user_id (FK)
+    address_id (FK)
+    status (enum: pending / confirmed / shipped / delivered / cancelled / refunded)
+    subtotal (decimal 10,2)
+    discount (decimal 10,2 default 0)
+    shipping (decimal 10,2 default 0)
+    total (decimal 10,2)
+    notes (text nullable)
+    coupon_id (FK nullable)
+    timestamps
+
+order_items
+    id
+    order_id (FK)
+    product_id (FK)
+    product_name (string → snapshot nom)
+    quantity
+    unit_price (decimal 10,2)
+    total_price (decimal 10,2)
+    timestamps
+
+payments
+    id
+    order_id (FK)
+    stripe_payment_intent_id (string unique)
+    amount (decimal 10,2)
+    currency (string default 'EUR')
+    status (enum: pending / succeeded / failed / refunded)
+    paid_at (timestamp nullable)
+    timestamps
+
+coupons
+    id
+    code (string unique)
+    type (enum: percent / fixed)
+    value (decimal 10,2)
+    min_order_amount (decimal nullable)
+    usage_limit (unsignedInt nullable)
+    usage_count (unsignedInt default 0)
+    expires_at (timestamp nullable)
+    timestamps
+
+coupon_usage (pivot)
+    coupon_id (FK)
+    user_id (FK)
+    order_id (FK)
+    used_at (timestamp)
+
+reviews
+    id
+    product_id (FK)
+    user_id (FK)
+    rating (unsignedTinyInt → 1 à 5)
+    title (string nullable)
+    body (text nullable)
+    is_approved (boolean default false)
+    timestamps
+
+
+================================================================================
+4. RÉSEAU SOCIAL DE DÉVELOPPEURS
+================================================================================
+
+Base de données : MySQL + Redis
+Niveau : Avancé
+
+FONCTIONNALITÉS
+---------------
+- Profils avec bio, stack technique, liens GitHub/LinkedIn
+- Follow/unfollow avec feed d'activité personnalisé
+- Partage de snippets de code avec coloration syntaxique (Prism.js)
+- Système de likes, commentaires, reposts
+- Mentions (@username) dans les posts avec notifications
+- Hashtags cliquables avec pages dédiées
+- Messagerie privée entre utilisateurs
+- Suggestions d'utilisateurs à suivre (même stack)
+- Pagination infinie avec Livewire ou Intersection Observer
+
+CONCEPTS LARAVEL COUVERTS
+--------------------------
+- Relations polymorphiques (likes sur posts ET commentaires)
+- Eloquent : whereHas, withCount, has, doesntHave
+- Cache Redis (feed, compteurs de likes)
+- Full-text search avec Laravel Scout + Meilisearch
+- Pagination curseur (plus performante que offset pour les feeds)
+- Queues pour traiter les notifications en masse
+
+STRUCTURE BASE DE DONNÉES
+--------------------------
+
+users
+    id
+    username (unique)
+    name, email, password
+    avatar
+    bio (text nullable)
+    location (nullable)
+    github_url, linkedin_url, website_url
+    stack (json → ["Laravel","React","MySQL"])
+    timestamps
+
+posts
+    id
+    user_id (FK)
+    content (text)
+    type (enum: post / snippet / repost)
+    original_post_id (FK nullable → pour repost)
+    views_count (unsignedInt default 0)
+    deleted_at (soft delete)
+    timestamps
+
+snippets
+    id
+    post_id (FK)
+    title
+    code (longText)
+    language (string → "php", "js", "python")
+    timestamps
+
+comments
+    id
+    post_id (FK)
+    user_id (FK)
+    parent_id (FK nullable → réponses)
+    content (text)
+    deleted_at (soft delete)
+    timestamps
+
+likes (polymorphique → post OU comment)
+    id
+    user_id (FK)
+    likeable_type
+    likeable_id
+    timestamps
+
+follows
+    id
+    follower_id (FK → users)
+    following_id (FK → users)
+    timestamps
+    index unique sur (follower_id, following_id)
+
+hashtags
+    id
+    name (unique)
+    posts_count (unsignedInt default 0)
+    timestamps
+
+post_hashtag (pivot)
+    post_id (FK)
+    hashtag_id (FK)
+
+conversations
+    id
+    timestamps
+
+conversation_user (pivot)
+    conversation_id (FK)
+    user_id (FK)
+    last_read_at (timestamp nullable)
+
+messages
+    id
+    conversation_id (FK)
+    user_id (FK)
+    content (text)
+    read_at (timestamp nullable)
+    deleted_at (soft delete)
+    timestamps
+
+notifications (table Laravel native)
+    id (uuid), type, notifiable_type, notifiable_id
+    data (json), read_at (nullable), timestamps
+
+
+================================================================================
+5. PLATEFORME DE COURS EN LIGNE
+================================================================================
+
+Base de données : MySQL + Redis + S3
+Niveau : Expert
+
+FONCTIONNALITÉS
+---------------
+- Rôles : admin, instructeur, étudiant
+- Instructeurs créent des cours avec sections et leçons
+- Upload vidéo avec stockage S3 (ou Cloudinary)
+- Progression par leçon (marquer comme terminé)
+- Paiement unique par cours avec Stripe
+- Accès conditionnel : leçon accessible seulement si cours acheté
+- Certificat PDF généré automatiquement à la fin du cours
+- Système de quiz à la fin de chaque section
+- Avis et notes sur les cours
+- Dashboard instructeur : revenus, étudiants inscrits, progression
+
+CONCEPTS LARAVEL COUVERTS
+--------------------------
+- Middleware personnalisé (vérifier si cours acheté avant accès leçon)
+- Storage S3 avec signed URLs (vidéos privées non téléchargeables)
+- Jobs pour traiter les uploads vidéo
+- Gates pour contrôler l'accès au contenu
+- Eloquent : hasManyThrough relationships
+- Stripe Connect (paiements vers instructeurs)
+
+STRUCTURE BASE DE DONNÉES
+--------------------------
+
+users
+    id, name, email, password
+    role (enum: admin / instructor / student)
+    avatar, bio (text nullable)
+    timestamps
+
+courses
+    id
+    instructor_id (FK)
+    category_id (FK)
+    title
+    slug (unique)
+    description (longText)
+    thumbnail
+    preview_video_url (nullable)
+    price (decimal 10,2)
+    level (enum: beginner / intermediate / advanced)
+    language (string default 'fr')
+    is_published (boolean default false)
+    students_count (unsignedInt default 0)
+    rating_avg (decimal 3,2 default 0)
+    deleted_at (soft delete)
+    timestamps
+
+sections
+    id
+    course_id (FK)
+    title
+    position (unsignedSmallInt)
+    timestamps
+
+lessons
+    id
+    section_id (FK)
+    title
+    video_url (string → S3 path)
+    duration (unsignedSmallInt → secondes)
+    content (longText nullable → notes texte)
+    position (unsignedSmallInt)
+    is_free_preview (boolean default false)
+    timestamps
+
+enrollments
+    id
+    user_id (FK)
+    course_id (FK)
+    payment_id (FK nullable)
+    enrolled_at (timestamp)
+    completed_at (timestamp nullable)
+    index unique sur (user_id, course_id)
+
+lesson_progress
+    id
+    user_id (FK)
+    lesson_id (FK)
+    is_completed (boolean default false)
+    completed_at (timestamp nullable)
+    timestamps
+    index unique sur (user_id, lesson_id)
+
+payments
+    id
+    user_id (FK)
+    course_id (FK)
+    stripe_payment_intent_id (string unique)
+    amount (decimal 10,2)
+    status (enum: pending / succeeded / failed)
+    paid_at (timestamp nullable)
+    timestamps
+
+reviews
+    id
+    course_id (FK)
+    user_id (FK)
+    rating (unsignedTinyInt → 1 à 5)
+    comment (text nullable)
+    is_approved (boolean default false)
+    timestamps
+
+quizzes
+    id
+    section_id (FK)
+    title
+    pass_score (unsignedTinyInt default 70)
+    timestamps
+
+quiz_questions
+    id
+    quiz_id (FK)
+    question (text)
+    options (json → ["opt1","opt2","opt3","opt4"])
+    correct_answer (unsignedTinyInt → index de la bonne réponse)
+    timestamps
+
+quiz_attempts
+    id
+    user_id (FK)
+    quiz_id (FK)
+    score (unsignedTinyInt)
+    passed (boolean)
+    answers (json)
+    attempted_at (timestamp)
+
+certificates
+    id
+    user_id (FK)
+    course_id (FK)
+    certificate_number (string unique)
+    issued_at (timestamp)
+    pdf_path (string nullable)
+
+
+================================================================================
+6. API REST + SPA (LARAVEL 11 + REACT)
+================================================================================
+
+Base de données : PostgreSQL + Redis
+Niveau : Expert
+
+FONCTIONNALITÉS
+---------------
+- Laravel comme backend pur (pas de Blade)
+- Authentification Sanctum avec tokens
+- CRUD complet avec validation poussée
+- Pagination, filtres, tri via query params
+- Upload fichiers avec validation MIME
+- Rate limiting par endpoint
+- Versioning API (v1, v2)
+- Documentation auto avec Swagger/L5-Swagger
+- Tests Feature complets (chaque endpoint testé)
+- React comme frontend avec React Query pour les appels API
+
+CONCEPTS LARAVEL COUVERTS
+--------------------------
+- API Resources (transformer les modèles en JSON propre)
+- Form Requests avec règles de validation custom
+- Rate Limiting avec RateLimiter facade
+- Sanctum (tokens, abilities/scopes)
+- Tests Feature avec RefreshDatabase
+- Repository Pattern (séparer la logique métier)
+- Service Layer (controllers fins, logique dans services)
+
+STRUCTURE RECOMMANDÉE DU CODE
+------------------------------
+
+app/
+  Http/
+    Controllers/Api/V1/
+    Resources/
+    Requests/
+  Services/
+  Repositories/
+  Interfaces/
+
+STRUCTURE BASE DE DONNÉES
+--------------------------
+
+users
+    id, name, email, password
+    email_verified_at (timestamp nullable)
+    timestamps
+
+personal_access_tokens (Sanctum → auto-générée)
+    id
+    tokenable_type, tokenable_id
+    name
+    token (string unique)
+    abilities (text nullable)
+    last_used_at (timestamp nullable)
+    timestamps
+
+projects
+    id
+    user_id (FK)
+    title
+    description (text nullable)
+    status (enum: active / archived)
+    deleted_at (soft delete)
+    timestamps
+
+tasks
+    id
+    project_id (FK)
+    assigned_to (FK nullable → users)
+    title
+    description (text nullable)
+    priority (enum: low / medium / high / urgent)
+    status (enum: todo / in_progress / review / done)
+    due_date (date nullable)
+    position (unsignedSmallInt)
+    deleted_at (soft delete)
+    timestamps
+
+task_comments
+    id
+    task_id (FK)
+    user_id (FK)
+    content (text)
+    timestamps
+
+attachments (polymorphique)
+    id
+    attachable_type
+    attachable_id
+    filename, path, mime_type
+    size (unsignedBigInt)
+    timestamps
+
+
+================================================================================
+7. BASES DE DONNÉES RECOMMANDÉES PAR PROJET
+================================================================================
+
++---------------------------+-------------+-------------+---------+
+| Projet                    | Principal   | Cache/Queue | Fichiers|
++---------------------------+-------------+-------------+---------+
+| Blog multi-auteurs        | MySQL       | -           | Local/S3|
+| Gestion de tâches         | MySQL       | Redis       | Local   |
+| E-commerce                | MySQL       | Redis       | S3      |
+| Réseau social             | MySQL       | Redis       | S3      |
+| Plateforme de cours       | MySQL       | Redis       | S3      |
+| API REST + SPA            | PostgreSQL  | Redis       | S3      |
++---------------------------+-------------+-------------+---------+
+
+POURQUOI MYSQL POUR LA PLUPART ?
+---------------------------------
+- Tu le connais déjà (ton portfolio tourne dessus)
+- Parfait pour les données relationnelles classiques
+- Très bien supporté par Laravel
+- Hébergement gratuit facile (Railway, PlanetScale)
+
+POURQUOI POSTGRESQL POUR L'API REST ?
+--------------------------------------
+- Plus robuste pour les applications professionnelles
+- Meilleur support des types JSON avancés
+- Compétence très demandée en entreprise
+- Prépare aux environnements enterprise
+
+POURQUOI REDIS ?
+-----------------
+- Cache du feed et des compteurs (likes, vues) → performances x10
+- Queues pour les jobs en arrière-plan (emails, PDF, notifications)
+- Sessions rapides
+- Indispensable dès que l'app grossit
+
+POURQUOI S3 POUR LES FICHIERS ?
+---------------------------------
+- Ne jamais stocker des vidéos ou images en local sur le serveur
+- Le serveur peut redémarrer et perdre les fichiers
+- S3 est scalable, fiable, et peu coûteux
+- Cloudinary est une alternative gratuite pour les images
+
+RÈGLES GÉNÉRALES SUR LES TYPES DE COLONNES
+--------------------------------------------
+- Foreign keys          → unsignedBigInteger
+- Prix                  → decimal(10,2) — jamais float (imprécis)
+- Valeurs fixes         → enum (status, role, type)
+- Données structurées   → json (options, metadata, stack)
+- Suppression douce     → soft deletes (deleted_at) sur données importantes
+- Index                 → sur toutes les FK et colonnes fréquemment filtrées
+- Pivot unique          → index unique sur les colonnes de pivot (follow, enrollment)
+
+
+================================================================================
+8. ORDRE DE RÉALISATION RECOMMANDÉ
+================================================================================
+
+Étape 1 → Blog multi-auteurs
+    Objectif : maîtriser les bases solides de Laravel
+    (auth, rôles, queues, events, observers)
+
+Étape 2 → Gestion de tâches
+    Objectif : apprendre le temps réel et Livewire
+    (WebSockets, notifications, drag & drop)
+
+Étape 3 → E-commerce
+    Objectif : intégrer les paiements et les queues avancées
+    (Stripe, PDF, transactions DB, webhooks)
+
+Étape 4 → API REST + React
+    Objectif : maîtriser l'architecture moderne découplée
+    (API Resources, Sanctum, tests, Repository Pattern)
+
+Étape 5 → Réseau social
+    Objectif : optimiser les performances à grande échelle
+    (Redis, pagination curseur, relations polymorphiques)
+
+Étape 6 → Plateforme de cours
+    Objectif : projet le plus complet, combine tout
+    (S3, Stripe Connect, middleware avancé, certificats PDF)
+
+================================================================================
+                            FIN DU DOCUMENT
+================================================================================

@@ -7,10 +7,11 @@ if [ ! -f /var/www/html/.env ]; then
     cp /var/www/html/.env.example /var/www/html/.env
 fi
 
-# Injecter les variables Railway dans le .env
+# Injecter les variables d'environnement dans le .env
 for var in APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL \
            DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD \
-           SESSION_DRIVER CACHE_DRIVER QUEUE_CONNECTION; do
+           SESSION_DRIVER CACHE_DRIVER QUEUE_CONNECTION \
+           MAIL_MAILER MAIL_HOST MAIL_PORT MAIL_USERNAME MAIL_PASSWORD MAIL_ENCRYPTION MAIL_FROM_ADDRESS MAIL_FROM_NAME; do
     value=$(printenv "$var" 2>/dev/null || true)
     if [ -n "$value" ]; then
         if grep -q "^${var}=" /var/www/html/.env; then

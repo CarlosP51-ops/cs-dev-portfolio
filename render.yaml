@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: cs-dev-portfolio
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: APP_NAME
+        value: Portfolio
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        generateValue: false
+        # Remplace par ton URL Render après création : https://[ton-service].onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false   # À remplir manuellement avec MYSQLHOST de Railway
+      - key: DB_PORT
+        sync: false   # À remplir manuellement avec MYSQLPORT de Railway
+      - key: DB_DATABASE
+        sync: false   # À remplir manuellement avec MYSQLDATABASE de Railway
+      - key: DB_USERNAME
+        sync: false   # À remplir manuellement avec MYSQLUSER de Railway
+      - key: DB_PASSWORD
+        sync: false   # À remplir manuellement avec MYSQLPASSWORD de Railway
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
