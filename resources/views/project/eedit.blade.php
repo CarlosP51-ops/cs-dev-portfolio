@@ -10,11 +10,59 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script src="https://cdn.tiny.cloud/1/529m3iftubw899qr0ox098197kcpg7bvsms5xcuguzl7y7c5/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        class TagInput {
+            constructor(containerId, fieldName, initialItems = []) {
+                this.container = document.getElementById(containerId);
+                this.fieldName = fieldName;
+                this.items = [...initialItems];
+                this.render();
+            }
+            render() {
+                this.container.innerHTML = `
+                    <div class="tag-list flex flex-wrap gap-2 mb-3 min-h-[36px]"></div>
+                    <div class="flex gap-2">
+                        <input type="text" class="tag-input flex-1 px-3 py-2 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent" placeholder="Tapez et appuyez sur Entrée" />
+                        <button type="button" class="tag-add px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-md transition">+</button>
+                    </div>
+                    <div class="hidden-inputs"></div>`;
+                this.tagList = this.container.querySelector('.tag-list');
+                this.input = this.container.querySelector('.tag-input');
+                this.addBtn = this.container.querySelector('.tag-add');
+                this.hiddenInputs = this.container.querySelector('.hidden-inputs');
+                this.items.forEach(item => this._addTag(item));
+                this.addBtn.addEventListener('click', () => this._addFromInput());
+                this.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this._addFromInput(); } });
+            }
+            _addFromInput() {
+                const val = this.input.value.trim();
+                if (val && !this.items.includes(val)) { this.items.push(val); this._addTag(val); this.input.value = ''; }
+                this.input.focus();
+            }
+            _addTag(text) {
+                const badge = document.createElement('span');
+                badge.className = 'inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 text-sm px-3 py-1.5 rounded-full';
+                badge.innerHTML = `<span>${text}</span><button type="button" class="text-blue-400 hover:text-red-500 transition font-bold leading-none">&times;</button>`;
+                badge.querySelector('button').addEventListener('click', () => { this.items = this.items.filter(i => i !== text); badge.remove(); this._syncHidden(); });
+                this.tagList.appendChild(badge);
+                this._syncHidden();
+            }
+            _syncHidden() {
+                this.hiddenInputs.innerHTML = '';
+                this.items.forEach(item => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden'; input.name = `${this.fieldName}[]`; input.value = item;
+                    this.hiddenInputs.appendChild(input);
+                });
+            }
+        }
+    </script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            max-width: 100%;
         }
 
         .sidebar-link {
@@ -183,38 +231,36 @@
             </div>
         </aside>
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-h-screen lg:ml-0">
+        <main class="flex-1 flex flex-col min-h-screen lg:ml-0 min-w-0">
             <!-- Header -->
-            <header class="bg-white shadow-sm sticky top-0 z-30 p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <a href="{{ route('admin.project') }}" class="text-gray-500 hover:text-gray-700">
-                                <i class="ri-arrow-left-line text-xl"></i>
-                            </a>
-                            <h1 class="text-3xl font-bold text-gray-800">Modifier le Projet</h1>
-                        </div>
-                        <p class="text-gray-500">Modifiez les informations de votre projet</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <a href="{{ route('projet.show', $project->id) }}" target="_blank"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition">
-                            <i class="ri-eye-line"></i>
-                            <span class="hidden sm:inline">Prévisualiser</span>
+            <header class="bg-white shadow-sm sticky top-0 z-30 p-4 sm:p-6">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 pl-10 lg:pl-0">
+                        <a href="{{ route('admin.project') }}" class="text-gray-500 hover:text-gray-700">
+                            <i class="ri-arrow-left-line text-xl"></i>
                         </a>
+                        <div>
+                            <h1 class="text-lg sm:text-3xl font-bold text-gray-800 leading-tight">Modifier le Projet</h1>
+                            <p class="text-gray-500 text-xs sm:text-sm hidden sm:block">Modifiez les informations de votre projet</p>
+                        </div>
                     </div>
+                    <a href="{{ route('projet.show', $project->id) }}" target="_blank"
+                        class="inline-flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition text-sm">
+                        <i class="ri-eye-line"></i>
+                        <span class="hidden sm:inline">Prévisualiser</span>
+                    </a>
                 </div>
             </header>
 
             <!-- Form Content -->
-            <section class="p-6 flex-1">
+            <section class="p-3 sm:p-6 flex-1">
                 <form id="projectForm" method="POST" action="{{ route('projects.update', $project->id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
-                    <div class="max-w-5xl mx-auto space-y-6">
+                    <div class="max-w-5xl mx-auto space-y-4 sm:space-y-6">
                         <!-- Informations de base -->
-                        <div class="form-section bg-white rounded-2xl shadow-lg p-6">
+                        <div class="form-section bg-white rounded-2xl shadow-lg p-4 sm:p-6">
                             <div class="flex items-center gap-3 mb-6">
                                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-information-line text-white text-xl"></i>
@@ -239,18 +285,20 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         <i class="ri-file-text-line text-blue-600"></i> Description *
                                     </label>
-                                    <textarea name="description" class="tinymce-field" placeholder="Décrivez votre projet en détail">{{ old('description', $project->description) }}</textarea>
+                                    <textarea name="description" rows="6" required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition resize-y text-sm"
+                                        placeholder="Décrivez votre projet en détail">{{ old('description', $project->description) }}</textarea>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Détails du projet -->
-                        <div class="form-section bg-white rounded-2xl shadow-lg p-6">
-                            <div class="flex items-center gap-3 mb-6">
+                        <div class="form-section bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                            <div class="flex items-center gap-3 mb-4 sm:mb-6">
                                 <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-list-check text-white text-xl"></i>
                                 </div>
-                                <h2 class="text-xl font-bold text-gray-800">Détails du projet</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-gray-800">Détails du projet</h2>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -259,7 +307,8 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         <i class="ri-target-line text-green-600"></i> Objectifs
                                     </label>
-                                    <textarea name="objectives" class="tinymce-field" placeholder="Quels sont les objectifs ?">{{ old('objectives', $project->objectives) }}</textarea>
+                                    <p class="text-xs text-gray-400 mb-2">Tapez un objectif et appuyez sur Entrée</p>
+                                    <div id="objectives-container"></div>
                                 </div>
 
                                 <!-- Défis -->
@@ -267,7 +316,8 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         <i class="ri-lightbulb-flash-line text-orange-600"></i> Défis relevés
                                     </label>
-                                    <textarea name="challenges" class="tinymce-field" placeholder="Quels défis avez-vous rencontrés ?">{{ old('challenges', $project->challenges) }}</textarea>
+                                    <p class="text-xs text-gray-400 mb-2">Tapez un défi et appuyez sur Entrée</p>
+                                    <div id="challenges-container"></div>
                                 </div>
                             </div>
 
@@ -276,47 +326,47 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                                     <i class="ri-function-line text-purple-600"></i> Fonctionnalités principales
                                 </label>
-                                <textarea name="fonctionnalites" class="tinymce-field" placeholder="Listez les fonctionnalités">{{ old('fonctionnalites', $project->fonctionnalites) }}</textarea>
+                                <p class="text-xs text-gray-400 mb-2">Tapez une fonctionnalité et appuyez sur Entrée</p>
+                                <div id="fonctionnalites-container"></div>
                             </div>
                         </div>
 
                         <!-- Technologies -->
-                        <div class="form-section bg-white rounded-2xl shadow-lg p-6">
-                            <div class="flex items-center gap-3 mb-6">
+                        <div class="form-section bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                            <div class="flex items-center gap-3 mb-4 sm:mb-6">
                                 <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-code-s-slash-line text-white text-xl"></i>
                                 </div>
-                                <h2 class="text-xl font-bold text-gray-800">Technologies utilisées</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-gray-800">Technologies utilisées</h2>
                             </div>
-
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
                                 @foreach ($allTechnologies as $technology)
-                                    <label class="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl hover:bg-blue-50 cursor-pointer transition border-2 border-transparent hover:border-blue-200">
+                                    <label class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 bg-gray-50 rounded-xl hover:bg-blue-50 cursor-pointer transition border-2 border-transparent hover:border-blue-200">
                                         <input type="checkbox" name="technologies[]" value="{{ $technology->id }}"
-                                            class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                                            class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                                             {{ $project->technologies->contains($technology->id) ? 'checked' : '' }}>
-                                        <span class="font-medium text-gray-700">{{ $technology->name }}</span>
+                                        <span class="font-medium text-gray-700 text-sm">{{ $technology->name }}</span>
                                     </label>
                                 @endforeach
                             </div>
                         </div>
 
                         <!-- Liens -->
-                        <div class="form-section bg-white rounded-2xl shadow-lg p-6">
-                            <div class="flex items-center gap-3 mb-6">
+                        <div class="form-section bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                            <div class="flex items-center gap-3 mb-4 sm:mb-6">
                                 <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-links-line text-white text-xl"></i>
                                 </div>
-                                <h2 class="text-xl font-bold text-gray-800">Liens du projet</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-gray-800">Liens du projet</h2>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         <i class="ri-global-line text-blue-600"></i> Lien de visualisation *
                                     </label>
                                     <input type="url" name="link_visualisation" required
-                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-sm"
                                         value="{{ old('link_visualisation', $project->link_visualisation) }}"
                                         placeholder="https://mon-projet.com">
                                 </div>
@@ -326,7 +376,7 @@
                                         <i class="ri-github-fill text-gray-700"></i> Lien GitHub
                                     </label>
                                     <input type="url" name="link_github"
-                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-sm"
                                         value="{{ old('link_github', $project->link_github) }}"
                                         placeholder="https://github.com/username/repo">
                                 </div>
@@ -334,24 +384,23 @@
                         </div>
 
                         <!-- Images -->
-                        <div class="form-section bg-white rounded-2xl shadow-lg p-6">
-                            <div class="flex items-center gap-3 mb-6">
+                        <div class="form-section bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                            <div class="flex items-center gap-3 mb-4 sm:mb-6">
                                 <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-image-line text-white text-xl"></i>
                                 </div>
-                                <h2 class="text-xl font-bold text-gray-800">Images du projet</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-gray-800">Images du projet</h2>
                             </div>
 
                             <!-- Image principale -->
-                            <div class="mb-6">
+                            <div class="mb-5">
                                 <label class="block text-sm font-semibold text-gray-700 mb-3">
                                     <i class="ri-image-2-line text-pink-600"></i> Image principale
                                 </label>
-                                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-purple-400 transition cursor-pointer" id="mainImageDropZone">
-                                    <i class="ri-upload-cloud-2-line text-5xl text-gray-400 mb-3"></i>
-                                    <p class="text-gray-600 mb-2">Glissez-déposez une image ou</p>
-                                    <button type="button" id="selectMainImageBtn"
-                                        class="text-purple-600 font-semibold hover:text-purple-700">
+                                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-5 sm:p-8 text-center hover:border-purple-400 transition cursor-pointer" id="mainImageDropZone">
+                                    <i class="ri-upload-cloud-2-line text-3xl sm:text-5xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600 text-sm mb-2">Glissez-déposez ou</p>
+                                    <button type="button" id="selectMainImageBtn" class="text-purple-600 font-semibold hover:text-purple-700 text-sm">
                                         Parcourir les fichiers
                                     </button>
                                     <input type="file" id="mainProjectImage" name="imagefirst" accept="image/*" class="hidden">
@@ -359,10 +408,8 @@
                                 <div id="mainImagePreview" class="mt-4 grid grid-cols-1 gap-4">
                                     @if ($project->imagefirst)
                                         <div class="image-preview relative">
-                                            <img src="{{ asset($project->imagefirst) }}" class="w-full h-64 object-cover rounded-xl">
-                                            <div class="remove-image">
-                                                <i class="ri-close-line"></i>
-                                            </div>
+                                            <img src="{{ asset($project->imagefirst) }}" class="w-full h-40 sm:h-64 object-cover rounded-xl">
+                                            <div class="remove-image"><i class="ri-close-line"></i></div>
                                         </div>
                                     @endif
                                 </div>
@@ -373,22 +420,19 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-3">
                                     <i class="ri-gallery-line text-pink-600"></i> Images supplémentaires
                                 </label>
-                                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-purple-400 transition cursor-pointer" id="additionalImagesDropZone">
-                                    <i class="ri-image-add-line text-5xl text-gray-400 mb-3"></i>
-                                    <p class="text-gray-600 mb-2">Ajoutez plusieurs images</p>
-                                    <button type="button" id="selectAdditionalImagesBtn"
-                                        class="text-purple-600 font-semibold hover:text-purple-700">
+                                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-5 sm:p-8 text-center hover:border-purple-400 transition cursor-pointer" id="additionalImagesDropZone">
+                                    <i class="ri-image-add-line text-3xl sm:text-5xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600 text-sm mb-2">Ajoutez plusieurs images</p>
+                                    <button type="button" id="selectAdditionalImagesBtn" class="text-purple-600 font-semibold hover:text-purple-700 text-sm">
                                         Sélectionner des images
                                     </button>
                                     <input type="file" id="additionalImages" name="images[]" multiple accept="image/*" class="hidden">
                                 </div>
-                                <div id="additionalImagesPreview" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div id="additionalImagesPreview" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                     @foreach ($project->images as $img)
                                         <div class="image-preview relative">
-                                            <img src="{{ asset($img->image_path) }}" class="w-full h-32 object-cover rounded-xl">
-                                            <div class="remove-image">
-                                                <i class="ri-close-line"></i>
-                                            </div>
+                                            <img src="{{ asset($img->image_path) }}" class="w-full h-24 sm:h-32 object-cover rounded-xl">
+                                            <div class="remove-image"><i class="ri-close-line"></i></div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -396,30 +440,29 @@
                         </div>
 
                         <!-- Statut -->
-                        <div class="form-section bg-white rounded-2xl shadow-lg p-6">
-                            <div class="flex items-center gap-3 mb-6">
+                        <div class="form-section bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                            <div class="flex items-center gap-3 mb-4 sm:mb-6">
                                 <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-checkbox-circle-line text-white text-xl"></i>
                                 </div>
-                                <h2 class="text-xl font-bold text-gray-800">Statut du projet</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-gray-800">Statut du projet</h2>
                             </div>
 
                             <select name="status" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
-                                <option value="Terminé" {{ $project->status == 'Terminé' ? 'selected' : '' }}>✅ Terminé</option>
-                                <option value="En cours" {{ $project->status == 'En cours' ? 'selected' : '' }}>⏳ En cours</option>
-                                <option value="En pause" {{ $project->status == 'En pause' ? 'selected' : '' }}>⏸️ En pause</option>
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-sm">
+                                <option value="termine" {{ $project->status == 'termine' ? 'selected' : '' }}>✅ Terminé</option>
+                                <option value="en_attente" {{ $project->status == 'en_attente' ? 'selected' : '' }}>⏳ En cours</option>
                             </select>
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex justify-end gap-4 pb-6">
+                        <div class="flex flex-col sm:flex-row justify-end gap-3 pb-6">
                             <a href="{{ route('admin.project') }}"
-                                class="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-gray-400 hover:bg-gray-50 transition font-semibold">
+                                class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-gray-400 hover:bg-gray-50 transition font-semibold text-center text-sm">
                                 Annuler
                             </a>
                             <button type="submit"
-                                class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-semibold">
+                                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-semibold text-sm">
                                 <i class="ri-save-line mr-2"></i>
                                 Enregistrer les modifications
                             </button>
@@ -446,16 +489,24 @@
             mobileOverlay.classList.remove('show');
         });
 
-        // GSAP Animations
-        gsap.from('.form-section', {
-            y: 50,
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: 'power3.out'
-        });
+        // GSAP Animations — uniquement sur desktop pour éviter les problèmes de visibilité mobile
+        if (window.innerWidth >= 1024) {
+            gsap.from('.form-section', {
+                y: 30,
+                opacity: 0,
+                duration: 0.5,
+                stagger: 0.08,
+                ease: 'power2.out',
+                clearProps: 'all'
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Init TagInput avec données existantes
+            new TagInput('objectives-container', 'objectives', {!! json_encode($project->objectives ?? []) !!});
+            new TagInput('challenges-container', 'challenges', {!! json_encode($project->challenges ?? []) !!});
+            new TagInput('fonctionnalites-container', 'fonctionnalites', {!! json_encode($project->fonctionnalites ?? []) !!});
+
             // Image principale
             const selectMainImageBtn = document.getElementById('selectMainImageBtn');
             const mainProjectImageInput = document.getElementById('mainProjectImage');

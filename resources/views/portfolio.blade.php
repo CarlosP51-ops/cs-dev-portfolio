@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>CS-Dev | Portfolio </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -308,13 +309,6 @@
                     </a>
                 </div>
                 
-                <!-- Scroll Indicator -->
-                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-                    <a href="#a-propos" class="flex flex-col items-center gap-2 text-white/70 hover:text-white transition">
-                        <span class="text-sm">Scroll</span>
-                        <i class="ri-arrow-down-line text-2xl"></i>
-                    </a>
-                </div>
             </div>
         </div>
     </section>
@@ -386,44 +380,44 @@
                             <i class="ri-code-box-line text-blue-600"></i>
                             Mes compétences
                         </h4>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                <div class="w-12 h-12 flex items-center justify-center text-orange-600 bg-orange-50 rounded-lg group-hover:scale-110 transition">
-                                    <i class="ri-html5-line text-2xl"></i>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-orange-600 bg-orange-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-html5-line text-xl sm:text-2xl"></i>
                                 </div>
-                                <span class="font-semibold text-gray-700">HTML/CSS</span>
+                                <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">HTML/CSS</span>
                             </div>
-                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                <div class="w-12 h-12 flex items-center justify-center text-yellow-600 bg-yellow-50 rounded-lg group-hover:scale-110 transition">
-                                    <i class="ri-javascript-line text-2xl"></i>
+                            <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-yellow-600 bg-yellow-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-javascript-line text-xl sm:text-2xl"></i>
                                 </div>
-                                <span class="font-semibold text-gray-700">JavaScript</span>
+                                <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">JavaScript</span>
                             </div>
-                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                <div class="w-12 h-12 flex items-center justify-center text-cyan-600 bg-cyan-50 rounded-lg group-hover:scale-110 transition">
-                                    <i class="ri-reactjs-line text-2xl"></i>
+                            <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-cyan-600 bg-cyan-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-reactjs-line text-xl sm:text-2xl"></i>
                                 </div>
-                                <span class="font-semibold text-gray-700">React</span>
+                                <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">React</span>
                             </div>
-                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                <div class="w-12 h-12 flex items-center justify-center text-red-600 bg-red-50 rounded-lg group-hover:scale-110 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6 h-6">
+                            <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-red-600 bg-red-50 rounded-lg group-hover:scale-110 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5 sm:w-6 sm:h-6">
                                         <path fill="currentColor" d="M141.7 51.6L0 256l141.7 204.4h228.6L512 256 370.3 51.6H141.7zm28.2 28.3h171.8l100 177.8-100 177.8H169.9L69.9 256l100-177.8z" />
                                     </svg>
                                 </div>
-                                <span class="font-semibold text-gray-700">Laravel</span>
+                                <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">Laravel</span>
                             </div>
-                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                <div class="w-12 h-12 flex items-center justify-center text-green-600 bg-green-50 rounded-lg group-hover:scale-110 transition">
-                                    <i class="ri-node-js-line text-2xl"></i>
+                            <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-green-600 bg-green-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-node-js-line text-xl sm:text-2xl"></i>
                                 </div>
-                                <span class="font-semibold text-gray-700">Node.js</span>
+                                <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">Node.js</span>
                             </div>
-                            <div class="group bg-white rounded-xl shadow-md p-4 flex items-center gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                <div class="w-12 h-12 flex items-center justify-center text-blue-600 bg-blue-50 rounded-lg group-hover:scale-110 transition">
-                                    <i class="ri-palette-line text-2xl"></i>
+                            <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                                <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-blue-600 bg-blue-50 rounded-lg group-hover:scale-110 transition">
+                                    <i class="ri-palette-line text-xl sm:text-2xl"></i>
                                 </div>
-                                <span class="font-semibold text-gray-700">Tailwind CSS</span>
+                                <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">Tailwind CSS</span>
                             </div>
                         </div>
                     </div>
@@ -455,13 +449,13 @@
             </div>
 
             <!-- Grille des projets -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 lg:gap-10">
                 @foreach ($projets as $projet)
                     <div
                         class="group relative bg-white rounded-2xl shadow-lg overflow-hidden project-card flex flex-col">
 
                         <!-- Image avec overlay -->
-                        <div class="relative h-64 sm:h-72 lg:h-60 overflow-hidden">
+                        <div class="relative h-48 sm:h-56 lg:h-60 overflow-hidden">
                             <img src="{{ asset($projet->imagefirst) }}" alt="{{ $projet->title }}"
                                 class="w-full h-full object-cover object-top transform group-hover:scale-110 transition duration-500">
                             <div
@@ -474,17 +468,17 @@
                         </div>
 
                         <!-- Contenu -->
-                        <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div class="p-4 sm:p-6 flex-1 flex flex-col justify-between">
                             <div>
-                                <h3 class="text-2xl font-semibold mb-3 text-gray-800">{{ $projet->title }}</h3>
-                                <p class="text-gray-600 mb-4 text-base leading-relaxed">{!! Str::limit($projet->description, 180) !!}</p>
+                                <h3 class="text-lg sm:text-xl font-semibold mb-2 text-gray-800">{{ $projet->title }}</h3>
+                                <p class="text-gray-600 mb-3 text-sm sm:text-base leading-relaxed">{!! Str::limit($projet->description, 150) !!}</p>
                             </div>
 
                             <!-- Technologies -->
-                            <div class="flex flex-wrap gap-2 mt-auto">
+                            <div class="flex flex-wrap gap-1.5 mt-auto">
                                 @foreach ($projet->technologies->slice(0, 4) as $tech)
                                     <span
-                                        class="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 text-sm px-3 py-1.5 rounded-full shadow-sm">
+                                        class="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 text-xs sm:text-sm px-2.5 py-1 rounded-full shadow-sm">
                                         {{ $tech->name }}
                                     </span>
                                 @endforeach
@@ -813,30 +807,28 @@
         // Counter Animation
         function animateCounter(element) {
             const target = parseInt(element.getAttribute('data-target'));
-            const duration = 2000;
-            const increment = target / (duration / 16);
-            let current = 0;
+            const duration = 1500;
+            const startTime = performance.now();
 
-            const updateCounter = () => {
-                current += increment;
-                if (current < target) {
-                    element.textContent = Math.floor(current);
+            const updateCounter = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // easeOutQuad
+                const eased = 1 - (1 - progress) * (1 - progress);
+                element.textContent = Math.floor(eased * target);
+                if (progress < 1) {
                     requestAnimationFrame(updateCounter);
                 } else {
                     element.textContent = target;
                 }
             };
 
-            updateCounter();
+            requestAnimationFrame(updateCounter);
         }
 
         // Trigger counter animation on scroll
         const counters = document.querySelectorAll('.counter');
         let counterAnimated = false;
-
-        const observerOptions = {
-            threshold: 0.5
-        };
 
         const counterObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -845,7 +837,7 @@
                     counterAnimated = true;
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1 }); // 0.1 au lieu de 0.5 — fonctionne sur mobile
 
         const aboutSection = document.getElementById('a-propos');
         if (aboutSection) {
@@ -976,93 +968,50 @@
         });
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            let formData = new FormData(this);
+
+            // Reset errors
+            document.querySelectorAll('[id$="Error"]').forEach(el => el.classList.add('hidden'));
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const privacy = document.getElementById('privacy').checked;
+
+            let isValid = true;
+            if (!name) { document.getElementById('nameError').classList.remove('hidden'); isValid = false; }
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) { document.getElementById('emailError').classList.remove('hidden'); isValid = false; }
+            if (!subject) { document.getElementById('subjectError').classList.remove('hidden'); isValid = false; }
+            if (!message || message.length < 10) { document.getElementById('messageError').classList.remove('hidden'); isValid = false; }
+            if (!privacy) { document.getElementById('privacyError').classList.remove('hidden'); isValid = false; }
+
+            if (!isValid) return;
+
+            const submitBtn = document.getElementById('submitBtn');
+            const formSuccess = document.getElementById('formSuccess');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="inline-flex items-center"><svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Envoi en cours...</span>';
 
             fetch(this.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('formSuccess').classList.remove('hidden');
-                        this.reset();
-                    }
-                });
-        });
-    </script>
-
-    <script id="contactFormScript">
-        document.addEventListener('DOMContentLoaded', function() {
-            const contactForm = document.getElementById('contactForm');
-            const formSuccess = document.getElementById('formSuccess');
-
-            if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    // Reset error messages
-                    document.querySelectorAll('[id$="Error"]').forEach(el => el.classList.add('hidden'));
-
-                    // Get form values
-                    const name = document.getElementById('name').value.trim();
-                    const email = document.getElementById('email').value.trim();
-                    const subject = document.getElementById('subject').value.trim();
-                    const message = document.getElementById('message').value.trim();
-                    const privacy = document.getElementById('privacy').checked;
-
-                    // Validate form
-                    let isValid = true;
-
-                    if (!name) {
-                        document.getElementById('nameError').classList.remove('hidden');
-                        isValid = false;
-                    }
-
-                    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-                        document.getElementById('emailError').classList.remove('hidden');
-                        isValid = false;
-                    }
-
-                    if (!subject) {
-                        document.getElementById('subjectError').classList.remove('hidden');
-                        isValid = false;
-                    }
-
-                    if (!message || message.length < 10) {
-                        document.getElementById('messageError').classList.remove('hidden');
-                        isValid = false;
-                    }
-
-                    if (!privacy) {
-                        document.getElementById('privacyError').classList.remove('hidden');
-                        isValid = false;
-                    }
-
-                    if (isValid) {
-                        // Simulate form submission
-                        const submitBtn = document.getElementById('submitBtn');
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML =
-                            '<span class="inline-flex items-center"><svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Envoi en cours...</span>';
-
-                        setTimeout(() => {
-                            contactForm.reset();
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = 'Envoyer le message';
-                            formSuccess.classList.remove('hidden');
-
-                            setTimeout(() => {
-                                formSuccess.classList.add('hidden');
-                            }, 5000);
-                        }, 1500);
-                    }
-                });
-            }
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+                body: new FormData(this)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    this.reset();
+                    formSuccess.classList.remove('hidden');
+                    setTimeout(() => formSuccess.classList.add('hidden'), 5000);
+                } else {
+                    alert('Une erreur est survenue. Veuillez réessayer.');
+                }
+            })
+            .catch(() => alert('Une erreur est survenue. Veuillez réessayer.'))
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Envoyer le message';
+            });
         });
     </script>
 </body>

@@ -95,16 +95,30 @@
         const isOpen = mobileMenu.classList.contains("mobile-menu-open");
         mobileMenu.classList.toggle("mobile-menu-open", !isOpen);
         mobileMenu.classList.toggle("mobile-menu-closed", isOpen);
-        mobileMenuBtn.innerHTML = !isOpen
-            ? '<i class="ri-close-line ri-lg"></i>'
-            : '<i class="ri-menu-line ri-lg"></i>';
+        mobileMenuBtn.innerHTML = isOpen
+            ? '<i class="ri-menu-line ri-lg"></i>'
+            : '<i class="ri-close-line ri-lg"></i>';
     });
 
-    mobileMenu.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
+    // Scroll fluide avec compensation du header fixe
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener("click", (e) => {
+            const targetId = link.getAttribute("href");
+            if (targetId === "#") return;
+            const target = document.querySelector(targetId);
+            if (!target) return;
+
+            e.preventDefault();
+
+            // Fermer le menu mobile si ouvert
             mobileMenu.classList.remove("mobile-menu-open");
             mobileMenu.classList.add("mobile-menu-closed");
             mobileMenuBtn.innerHTML = '<i class="ri-menu-line ri-lg"></i>';
+
+            // Scroll avec offset du header
+            const headerHeight = document.getElementById("mainHeader").offsetHeight;
+            const top = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+            window.scrollTo({ top, behavior: "smooth" });
         });
     });
 </script>

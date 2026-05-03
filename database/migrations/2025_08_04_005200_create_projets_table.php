@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id(); 
             $table->string('title'); 
             $table->text('description'); 
-            $table->text('objectives'); 
-            $table->text('challenges'); 
-            $table->text('fonctionnalites');
-            $table->string('imagefirst'); 
+            $table->json('objectives'); 
+            $table->json('challenges'); 
+            $table->json('fonctionnalites');
+            $table->string('imagefirst')->nullable(); 
             $table->string('link_visualisation')->nullable(); 
             $table->string('link_github')->nullable(); 
             $table->enum('status', ['termine', 'en_attente']);

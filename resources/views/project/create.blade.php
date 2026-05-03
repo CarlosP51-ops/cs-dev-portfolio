@@ -10,8 +10,55 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script src="https://cdn.tiny.cloud/1/529m3iftubw899qr0ox098197kcpg7bvsms5xcuguzl7y7c5/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        // TagInput component
+        class TagInput {
+            constructor(containerId, fieldName, initialItems = []) {
+                this.container = document.getElementById(containerId);
+                this.fieldName = fieldName;
+                this.items = [...initialItems];
+                this.render();
+            }
+            render() {
+                this.container.innerHTML = `
+                    <div class="tag-list flex flex-wrap gap-2 mb-3 min-h-[36px]"></div>
+                    <div class="flex gap-2">
+                        <input type="text" class="tag-input flex-1 px-3 py-2 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent" placeholder="Tapez et appuyez sur Entrée" />
+                        <button type="button" class="tag-add px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-md transition">+</button>
+                    </div>
+                    <div class="hidden-inputs"></div>`;
+                this.tagList = this.container.querySelector('.tag-list');
+                this.input = this.container.querySelector('.tag-input');
+                this.addBtn = this.container.querySelector('.tag-add');
+                this.hiddenInputs = this.container.querySelector('.hidden-inputs');
+                this.items.forEach(item => this._addTag(item));
+                this.addBtn.addEventListener('click', () => this._addFromInput());
+                this.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this._addFromInput(); } });
+            }
+            _addFromInput() {
+                const val = this.input.value.trim();
+                if (val && !this.items.includes(val)) { this.items.push(val); this._addTag(val); this.input.value = ''; }
+                this.input.focus();
+            }
+            _addTag(text) {
+                const badge = document.createElement('span');
+                badge.className = 'inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 text-sm px-3 py-1.5 rounded-full';
+                badge.innerHTML = `<span>${text}</span><button type="button" class="text-blue-400 hover:text-red-500 transition font-bold leading-none">&times;</button>`;
+                badge.querySelector('button').addEventListener('click', () => { this.items = this.items.filter(i => i !== text); badge.remove(); this._syncHidden(); });
+                this.tagList.appendChild(badge);
+                this._syncHidden();
+            }
+            _syncHidden() {
+                this.hiddenInputs.innerHTML = '';
+                this.items.forEach(item => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden'; input.name = `${this.fieldName}[]`; input.value = item;
+                    this.hiddenInputs.appendChild(input);
+                });
+            }
+        }
+    </script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -236,7 +283,9 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         <i class="ri-file-text-line text-blue-600"></i> Description *
                                     </label>
-                                    <textarea name="description" class="tinymce-field" placeholder="Décrivez votre projet en détail"></textarea>
+                                    <textarea name="description" rows="6" required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition resize-y text-sm"
+                                        placeholder="Décrivez votre projet en détail"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -256,7 +305,8 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         <i class="ri-target-line text-green-600"></i> Objectifs
                                     </label>
-                                    <textarea name="objectives" class="tinymce-field" placeholder="Quels sont les objectifs ?"></textarea>
+                                    <p class="text-xs text-gray-400 mb-2">Tapez un objectif et appuyez sur Entrée</p>
+                                    <div id="objectives-container"></div>
                                 </div>
 
                                 <!-- Défis -->
@@ -264,7 +314,8 @@
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         <i class="ri-lightbulb-flash-line text-orange-600"></i> Défis relevés
                                     </label>
-                                    <textarea name="challenges" class="tinymce-field" placeholder="Quels défis avez-vous rencontrés ?"></textarea>
+                                    <p class="text-xs text-gray-400 mb-2">Tapez un défi et appuyez sur Entrée</p>
+                                    <div id="challenges-container"></div>
                                 </div>
                             </div>
 
@@ -273,7 +324,8 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                                     <i class="ri-function-line text-purple-600"></i> Fonctionnalités principales
                                 </label>
-                                <textarea name="fonctionnalites" class="tinymce-field" placeholder="Listez les fonctionnalités"></textarea>
+                                <p class="text-xs text-gray-400 mb-2">Tapez une fonctionnalité et appuyez sur Entrée</p>
+                                <div id="fonctionnalites-container"></div>
                             </div>
                         </div>
 
@@ -386,9 +438,8 @@
 
                             <select name="status" required
                                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
-                                <option value="Terminé">✅ Terminé</option>
-                                <option value="En cours">⏳ En cours</option>
-                                <option value="En pause">⏸️ En pause</option>
+                                <option value="termine">✅ Terminé</option>
+                                <option value="en_attente">⏳ En cours</option>
                             </select>
                         </div>
 
@@ -426,17 +477,24 @@
             mobileOverlay.classList.remove('show');
         });
 
-        // GSAP Animations
-        gsap.from('.form-section', {
-            y: 30,
-            opacity: 0,
-            duration: 0.5,
-            stagger: 0.08,
-            ease: 'power2.out',
-            clearProps: 'all'
-        });
+        // GSAP Animations — uniquement sur desktop
+        if (window.innerWidth >= 1024) {
+            gsap.from('.form-section', {
+                y: 30,
+                opacity: 0,
+                duration: 0.5,
+                stagger: 0.08,
+                ease: 'power2.out',
+                clearProps: 'all'
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Init TagInput
+            new TagInput('objectives-container', 'objectives');
+            new TagInput('challenges-container', 'challenges');
+            new TagInput('fonctionnalites-container', 'fonctionnalites');
+
             // Image principale
             const selectMainImageBtn = document.getElementById('selectMainImageBtn');
             const mainProjectImageInput = document.getElementById('mainProjectImage');
@@ -535,11 +593,8 @@
             }
 
             // Submit du formulaire
-            const projectForm = document.getElementById('projectForm');
-            projectForm.addEventListener('submit', function(e) {
-                if (typeof tinymce !== 'undefined') {
-                    tinymce.triggerSave();
-                }
+            document.getElementById('projectForm').addEventListener('submit', function() {
+                // soumission native — rien à intercepter
             });
         });
     </script>

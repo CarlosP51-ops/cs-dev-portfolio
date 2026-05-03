@@ -214,79 +214,75 @@
             </header>
 
             <!-- Stats Cards -->
-            <section class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <section class="p-4 sm:p-6">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                     <!-- Total Projects -->
-                    <div class="stat-card bg-white rounded-2xl shadow-lg p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-14 h-14 gradient-blue rounded-xl flex items-center justify-center">
-                                <i class="ri-folder-line text-3xl text-white"></i>
+                    <div class="stat-card bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-14 sm:h-14 gradient-blue rounded-xl flex items-center justify-center">
+                                <i class="ri-folder-line text-xl sm:text-3xl text-white"></i>
                             </div>
-                            <span class="text-green-500 text-sm font-semibold flex items-center gap-1">
-                                <i class="ri-arrow-up-line"></i>
-                                12%
+                            <span class="text-green-500 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                                <i class="ri-arrow-up-line"></i>12%
                             </span>
                         </div>
-                        <h3 class="text-gray-500 text-sm font-medium mb-1">Total Projets</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ $totalProjects }}</p>
-                        <div class="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                        <h3 class="text-gray-500 text-xs sm:text-sm font-medium mb-1">Total Projets</h3>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800">{{ $totalProjects }}</p>
+                        <div class="mt-2 sm:mt-4 flex items-center gap-1 text-xs text-gray-500">
                             <i class="ri-time-line"></i>
-                            <span>Mis à jour il y a {{ $lastUpdateDays }}j</span>
+                            <span class="truncate">Mis à jour il y a {{ $lastUpdateDays }}j</span>
                         </div>
                     </div>
 
                     <!-- Visitors -->
-                    <div class="stat-card bg-white rounded-2xl shadow-lg p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-14 h-14 gradient-green rounded-xl flex items-center justify-center">
-                                <i class="ri-eye-line text-3xl text-white"></i>
+                    <div class="stat-card bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-14 sm:h-14 gradient-green rounded-xl flex items-center justify-center">
+                                <i class="ri-eye-line text-xl sm:text-3xl text-white"></i>
                             </div>
-                            <span class="text-green-500 text-sm font-semibold flex items-center gap-1">
-                                <i class="ri-arrow-up-line"></i>
-                                8%
+                            <span class="text-green-500 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                                <i class="ri-arrow-up-line"></i>8%
                             </span>
                         </div>
-                        <h3 class="text-gray-500 text-sm font-medium mb-1">Visiteurs ce mois</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ number_format($totalVisitors) }}</p>
-                        <div class="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                        <h3 class="text-gray-500 text-xs sm:text-sm font-medium mb-1">Visiteurs</h3>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800">{{ number_format($totalVisitors) }}</p>
+                        <div class="mt-2 sm:mt-4 flex items-center gap-1 text-xs text-gray-500">
                             <i class="ri-calendar-line"></i>
-                            <span>{{ now()->format('F Y') }}</span>
+                            <span class="truncate">{{ now()->format('M Y') }}</span>
                         </div>
                     </div>
 
                     <!-- Technologies -->
-                    <div class="stat-card bg-white rounded-2xl shadow-lg p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-14 h-14 gradient-orange rounded-xl flex items-center justify-center">
-                                <i class="ri-code-s-slash-line text-3xl text-white"></i>
+                    <div class="stat-card bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-14 sm:h-14 gradient-orange rounded-xl flex items-center justify-center">
+                                <i class="ri-code-s-slash-line text-xl sm:text-3xl text-white"></i>
                             </div>
-                            <span class="text-blue-500 text-sm font-semibold flex items-center gap-1">
-                                <i class="ri-arrow-right-line"></i>
-                                Stable
+                            <span class="text-blue-500 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                                <i class="ri-arrow-right-line"></i>Stable
                             </span>
                         </div>
-                        <h3 class="text-gray-500 text-sm font-medium mb-1">Technologies</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ \App\Models\Technologie::count() }}</p>
-                        <div class="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                        <h3 class="text-gray-500 text-xs sm:text-sm font-medium mb-1">Technologies</h3>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800">{{ \App\Models\Technologie::count() }}</p>
+                        <div class="mt-2 sm:mt-4 flex items-center gap-1 text-xs text-gray-500">
                             <i class="ri-stack-line"></i>
                             <span>Stack complet</span>
                         </div>
                     </div>
 
                     <!-- Performance -->
-                    <div class="stat-card bg-white rounded-2xl shadow-lg p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-14 h-14 gradient-purple rounded-xl flex items-center justify-center">
-                                <i class="ri-speed-line text-3xl text-white"></i>
+                    <div class="stat-card bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-14 sm:h-14 gradient-purple rounded-xl flex items-center justify-center">
+                                <i class="ri-speed-line text-xl sm:text-3xl text-white"></i>
                             </div>
-                            <span class="text-green-500 text-sm font-semibold flex items-center gap-1">
-                                <i class="ri-arrow-up-line"></i>
-                                15%
+                            <span class="text-green-500 text-xs sm:text-sm font-semibold flex items-center gap-1">
+                                <i class="ri-arrow-up-line"></i>15%
                             </span>
                         </div>
-                        <h3 class="text-gray-500 text-sm font-medium mb-1">Performance</h3>
-                        <p class="text-3xl font-bold text-gray-800">98%</p>
-                        <div class="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                        <h3 class="text-gray-500 text-xs sm:text-sm font-medium mb-1">Performance</h3>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800">98%</p>
+                        <div class="mt-2 sm:mt-4 flex items-center gap-1 text-xs text-gray-500">
                             <i class="ri-flashlight-line"></i>
                             <span>Excellent</span>
                         </div>
@@ -380,13 +376,15 @@
         });
 
         // GSAP Animations
-        gsap.from('.stat-card', {
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: 'power3.out'
-        });
+        if (window.innerWidth >= 1024) {
+            gsap.from('.stat-card', {
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: 'power3.out'
+            });
+        }
 
         // Chart.js
         const ctx = document.getElementById('visitorsChart').getContext('2d');

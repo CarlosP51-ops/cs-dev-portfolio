@@ -1,4 +1,4 @@
-<footer class="bg-indigo-800 text-white pt-16 pb-12">
+<footer class="bg-gray-800 text-white pt-16 pb-12">
     <div class="container mx-auto px-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
 
@@ -55,18 +55,25 @@
                 </ul>
             </div>
 
-            <!-- Newsletter -->
+            <!-- Contact rapide -->
             <div class="footer-col bg-white/10 p-4 rounded-xl shadow-lg">
-                <h3 class="text-lg font-semibold mb-4 text-white">Newsletter</h3>
-                <p class="text-gray-300 mb-4 text-sm">Recevez mes derniers articles et conseils directement dans votre boîte mail.</p>
-                <form class="flex gap-2 w-full">
-                    <input type="email" placeholder="Votre email"
-                        class="min-w-0 flex-1 px-4 py-2 rounded-l-md bg-white/20 border border-white/30 text-white placeholder-gray-200 focus:ring-2 focus:ring-yellow-300 focus:outline-none">
-                    <button type="submit"
-                        class="flex-shrink-0 bg-yellow-300 px-4 py-2 rounded-r-md font-medium text-gray-900 hover:bg-yellow-400 transition transform hover:scale-105">
-                        <i class="ri-send-plane-fill"></i>
-                    </button>
-                </form>
+                <h3 class="text-lg font-semibold mb-4 text-white">Contact</h3>
+                <ul class="space-y-3 text-gray-300 text-sm">
+                    <li class="flex items-center gap-2">
+                        <i class="ri-mail-line text-yellow-300"></i>
+                        <span>somissicarlos56@gmail.com</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="ri-phone-line text-yellow-300"></i>
+                        <span>{{ $user->tel }}</span>
+                    </li>
+                    <li class="mt-4">
+                        <a href="#contact"
+                            class="inline-block bg-yellow-300 text-gray-900 px-4 py-2 rounded-md font-medium hover:bg-yellow-400 transition">
+                            M'envoyer un message
+                        </a>
+                    </li>
+                </ul>
             </div>
 
         </div>

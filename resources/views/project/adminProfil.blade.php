@@ -161,72 +161,70 @@
         <!-- Main Content -->
         <main class="flex-1 flex flex-col min-h-screen lg:ml-0">
             <!-- Header -->
-            <header class="bg-white shadow-sm sticky top-0 z-30 p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800">Mon Profil</h1>
-                        <p class="text-gray-500 mt-1">Gérez vos informations personnelles</p>
+            <header class="bg-white shadow-sm sticky top-0 z-30 p-4 sm:p-6">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="pl-10 lg:pl-0">
+                        <h1 class="text-xl sm:text-3xl font-bold text-gray-800">Mon Profil</h1>
+                        <p class="text-gray-500 text-xs sm:text-sm mt-0.5 hidden sm:block">Gérez vos informations personnelles</p>
                     </div>
                     <a href="{{ route('profil.edit', $user->id) }}"
-                        class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105">
-                        <i class="ri-edit-line text-xl"></i>
-                        Modifier le profil
+                        class="inline-flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold hover:shadow-lg transition-all text-sm">
+                        <i class="ri-edit-line text-lg"></i>
+                        <span class="hidden sm:inline">Modifier le profil</span>
+                        <span class="sm:hidden">Modifier</span>
                     </a>
                 </div>
             </header>
 
             <!-- Profile Content -->
-            <section class="p-6 flex-1">
-                <div class="max-w-5xl mx-auto space-y-6">
+            <section class="p-3 sm:p-6 flex-1">
+                <div class="max-w-5xl mx-auto space-y-4 sm:space-y-6">
                     <!-- Profile Card -->
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                         <!-- Cover -->
-                        <div class="h-48 bg-gradient-to-r from-blue-600 to-purple-600 relative">
+                        <div class="h-28 sm:h-48 bg-gradient-to-r from-blue-600 to-purple-600 relative">
                             <div class="absolute inset-0 bg-black/10"></div>
                         </div>
 
                         <!-- Profile Info -->
-                        <div class="relative px-8 pb-8">
-                            <!-- Photo -->
-                            <div class="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-24 mb-6">
+                        <div class="relative px-4 sm:px-8 pb-6 sm:pb-8">
+                            <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 -mt-16 sm:-mt-24 mb-4 sm:mb-6">
                                 @if ($user->photo_de_profil)
                                     <img src="{{ asset('storage/' . $user->photo_de_profil) }}" alt="Photo de Profil"
-                                        class="profile-img">
+                                        class="profile-img !w-28 !h-28 sm:!w-[200px] sm:!h-[200px]">
                                 @else
-                                    <div class="profile-img bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                        <i class="ri-user-line text-7xl text-white"></i>
+                                    <div class="profile-img !w-28 !h-28 sm:!w-[200px] sm:!h-[200px] bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                        <i class="ri-user-line text-5xl sm:text-7xl text-white"></i>
                                     </div>
                                 @endif
-                                <div class="text-center md:text-left mb-4">
-                                    <h2 class="text-3xl font-bold text-gray-800">{{ $user->name }} {{ $user->surname }}</h2>
-                                    <p class="text-gray-500 mt-1">Administrateur</p>
+                                <div class="text-center sm:text-left mb-0 sm:mb-4">
+                                    <h2 class="text-xl sm:text-3xl font-bold text-gray-800">{{ $user->name }} {{ $user->surname }}</h2>
+                                    <p class="text-gray-500 mt-1 text-sm">Administrateur</p>
                                 </div>
                             </div>
 
                             <!-- Info Grid -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Email -->
-                                <div class="info-card bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <i class="ri-mail-line text-2xl text-white"></i>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                <div class="info-card bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 sm:p-6">
+                                    <div class="flex items-center gap-3 sm:gap-4">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="ri-mail-line text-lg sm:text-2xl text-white"></i>
                                         </div>
-                                        <div>
-                                            <p class="text-sm text-gray-500 font-medium">Email</p>
-                                            <p class="text-gray-800 font-semibold">{{ $user->email }}</p>
+                                        <div class="min-w-0">
+                                            <p class="text-xs sm:text-sm text-gray-500 font-medium">Email</p>
+                                            <p class="text-gray-800 font-semibold text-sm truncate">{{ $user->email }}</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Phone -->
-                                <div class="info-card bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <i class="ri-phone-line text-2xl text-white"></i>
+                                <div class="info-card bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-4 sm:p-6">
+                                    <div class="flex items-center gap-3 sm:gap-4">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="ri-phone-line text-lg sm:text-2xl text-white"></i>
                                         </div>
                                         <div>
-                                            <p class="text-sm text-gray-500 font-medium">Téléphone</p>
-                                            <p class="text-gray-800 font-semibold">{{ $user->tel }}</p>
+                                            <p class="text-xs sm:text-sm text-gray-500 font-medium">Téléphone</p>
+                                            <p class="text-gray-800 font-semibold text-sm">{{ $user->tel }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -234,77 +232,76 @@
                         </div>
                     </div>
 
-                    <!-- Services Section -->
+                    <!-- Services -->
                     @if($user->service)
-                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
                                 <i class="ri-service-line text-white text-xl"></i>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-800">Services</h3>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800">Services</h3>
                         </div>
-                        <div class="prose max-w-none text-gray-600">
-                            {!! $user->service !!}
-                        </div>
+                        <div class="prose max-w-none text-gray-600 text-sm">{!! $user->service !!}</div>
                     </div>
                     @endif
 
                     <!-- Social Links & CV -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Social Links -->
-                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-links-line text-white text-xl"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-800">Réseaux sociaux</h3>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Réseaux sociaux</h3>
                             </div>
-                            <div class="space-y-3">
+                            <div class="space-y-2 sm:space-y-3">
                                 @if($user->facebook_link)
                                 <a href="{{ $user->facebook_link }}" target="_blank"
-                                    class="flex items-center gap-3 p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition">
-                                    <i class="ri-facebook-fill text-2xl text-blue-600"></i>
+                                    class="flex items-center gap-3 p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition text-sm">
+                                    <i class="ri-facebook-fill text-xl text-blue-600"></i>
                                     <span class="text-gray-700 font-medium">Facebook</span>
                                 </a>
                                 @endif
                                 @if($user->github_link)
                                 <a href="{{ $user->github_link }}" target="_blank"
-                                    class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
-                                    <i class="ri-github-fill text-2xl text-gray-700"></i>
+                                    class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition text-sm">
+                                    <i class="ri-github-fill text-xl text-gray-700"></i>
                                     <span class="text-gray-700 font-medium">GitHub</span>
                                 </a>
                                 @endif
                                 @if($user->linkedin_link)
                                 <a href="{{ $user->linkedin_link }}" target="_blank"
-                                    class="flex items-center gap-3 p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition">
-                                    <i class="ri-linkedin-fill text-2xl text-blue-700"></i>
+                                    class="flex items-center gap-3 p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition text-sm">
+                                    <i class="ri-linkedin-fill text-xl text-blue-700"></i>
                                     <span class="text-gray-700 font-medium">LinkedIn</span>
                                 </a>
+                                @endif
+                                @if(!$user->facebook_link && !$user->github_link && !$user->linkedin_link)
+                                    <p class="text-sm text-gray-400 italic">Aucun réseau renseigné.</p>
                                 @endif
                             </div>
                         </div>
 
-                        <!-- CV -->
-                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
                                     <i class="ri-file-text-line text-white text-xl"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-800">Curriculum Vitae</h3>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Curriculum Vitae</h3>
                             </div>
                             @if ($user->cv_path)
                                 <a href="{{ url('/download-cv') }}" target="_blank"
                                     class="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition border-2 border-purple-200">
-                                    <i class="ri-download-2-line text-2xl text-purple-600"></i>
+                                    <i class="ri-download-2-line text-xl sm:text-2xl text-purple-600"></i>
                                     <div class="text-left">
-                                        <p class="font-semibold text-gray-800">Télécharger mon CV</p>
-                                        <p class="text-sm text-gray-500">Format PDF</p>
+                                        <p class="font-semibold text-gray-800 text-sm">Télécharger mon CV</p>
+                                        <p class="text-xs text-gray-500">Format PDF</p>
                                     </div>
                                 </a>
                             @else
-                                <div class="text-center py-8 text-gray-400">
-                                    <i class="ri-file-forbid-line text-5xl mb-2"></i>
-                                    <p>Aucun CV disponible</p>
+                                <div class="text-center py-6 text-gray-400">
+                                    <i class="ri-file-forbid-line text-4xl mb-2 block"></i>
+                                    <p class="text-sm">Aucun CV disponible</p>
                                 </div>
                             @endif
                         </div>

@@ -22,16 +22,20 @@ class ProjetCreateRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'objectives' => 'nullable|string',
-            'challenges' => 'nullable|string',
-            'fonctionnalites' => 'nullable|string',
+            'objectives' => 'nullable|array',
+            'objectives.*' => 'string|max:500',
+            'challenges' => 'nullable|array',
+            'challenges.*' => 'string|max:500',
+            'fonctionnalites' => 'nullable|array',
+            'fonctionnalites.*' => 'string|max:500',
             'technologies' => 'nullable|array',
-            'technologies.*' => 'integer|exists:technologies,id', // Chaque technologie doit être une chaîne
-            'imagefirst' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 2MB
-            'link_visualisation' => 'nullable|url', // URL valide
-            'link_github' => 'nullable|url', // URL valide
+            'technologies.*' => 'integer|exists:technologies,id',
+            'imagefirst' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'link_visualisation' => 'nullable|url',
+            'link_github' => 'nullable|url',
             'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Max 2MB par image
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'required|string',
         ];
     }
 

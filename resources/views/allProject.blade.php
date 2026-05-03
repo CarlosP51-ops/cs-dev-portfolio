@@ -152,11 +152,68 @@
             color: white;
         }
 
-        /* Grid animations */
+        /* Grid view — grille normale sur tablette/desktop */
         .grid-view {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
             gap: 2rem;
+        }
+
+        /* Sur mobile : liste horizontale image à gauche + contenu à droite */
+        @media (max-width: 640px) {
+            .grid-view {
+                display: flex;
+                flex-direction: column;
+                gap: 0.875rem;
+            }
+            .grid-view .project-card {
+                flex-direction: row !important;
+                height: 220px;
+            }
+            .grid-view .project-card .project-image {
+                width: 180px !important;
+                min-width: 180px;
+                height: 220px !important;
+                flex-shrink: 0;
+            }
+            .grid-view .project-card .project-image .overlay { display: none; }
+            .grid-view .project-card .card-content {
+                padding: 0.875rem !important;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .grid-view .project-card h3 {
+                font-size: 0.9rem !important;
+                margin-bottom: 0.3rem !important;
+                line-height: 1.3;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .grid-view .project-card .card-desc {
+                display: block !important;
+                font-size: 0.75rem !important;
+                line-height: 1.4;
+                color: #6b7280;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                margin-bottom: 0;
+            }
+            .grid-view .project-card .card-techs {
+                padding-top: 0.4rem !important;
+                margin-top: auto !important;
+                border-top: 1px solid #f3f4f6;
+                gap: 0.25rem !important;
+            }
+            .grid-view .project-card .card-techs span {
+                font-size: 0.65rem !important;
+                padding: 0.2rem 0.5rem !important;
+            }
         }
 
         .list-view {
@@ -194,7 +251,7 @@
     @include('partials.header')
 
     <!-- Hero Section -->
-    <section class="hero-gradient py-20 relative mt-16" style="overflow-x:hidden;">
+    <section class="hero-gradient py-12 sm:py-20 relative mt-16" style="overflow-x:hidden;">
         <div class="max-w-7xl mx-auto px-4 relative z-10">
             <div class="text-center text-white">
                 <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/30">
@@ -202,31 +259,31 @@
                     <span class="text-sm font-medium">Portfolio</span>
                 </div>
                 
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
                     Mes Projets
                 </h1>
-                <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+                <p class="text-base sm:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed px-2">
                     Découvrez une sélection de mes réalisations en développement web,
                     allant des applications e-commerce aux plateformes éducatives.
                 </p>
 
                 <!-- Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-4xl mx-auto">
-                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                        <div class="text-4xl font-bold mb-2">{{ $projets->total() }}</div>
-                        <div class="text-sm text-white/80">Projets</div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 sm:mt-12 max-w-4xl mx-auto">
+                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+                        <div class="text-2xl sm:text-4xl font-bold mb-1">{{ $projets->total() }}</div>
+                        <div class="text-xs sm:text-sm text-white/80">Projets</div>
                     </div>
-                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                        <div class="text-4xl font-bold mb-2">{{ \App\Models\Technologie::count() }}</div>
-                        <div class="text-sm text-white/80">Technologies</div>
+                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+                        <div class="text-2xl sm:text-4xl font-bold mb-1">{{ \App\Models\Technologie::count() }}</div>
+                        <div class="text-xs sm:text-sm text-white/80">Technologies</div>
                     </div>
-                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                        <div class="text-4xl font-bold mb-2">3+</div>
-                        <div class="text-sm text-white/80">Années</div>
+                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+                        <div class="text-2xl sm:text-4xl font-bold mb-1">3+</div>
+                        <div class="text-xs sm:text-sm text-white/80">Années</div>
                     </div>
-                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                        <div class="text-4xl font-bold mb-2">15+</div>
-                        <div class="text-sm text-white/80">Clients</div>
+                    <div class="stats-card bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+                        <div class="text-2xl sm:text-4xl font-bold mb-1">15+</div>
+                        <div class="text-xs sm:text-sm text-white/80">Clients</div>
                     </div>
                 </div>
             </div>
@@ -242,16 +299,16 @@
                 <div class="search-container w-full lg:w-2/3">
                     <form method="GET" action="{{ route('projects.all') }}" class="relative">
                         <div class="relative">
-                            <i class="ri-search-line absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
+                            <i class="ri-search-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
                             <input type="text" 
                                 name="search" 
-                                placeholder="Rechercher un projet par nom, description..." 
+                                placeholder="Rechercher un projet..." 
                                 value="{{ request('search') }}"
-                                class="w-full pl-14 pr-32 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base shadow-lg transition-all">
+                                class="w-full pl-11 pr-14 sm:pr-36 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base shadow-lg transition-all">
                             <button type="submit"
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
-                                <i class="ri-search-line mr-1"></i>
-                                Rechercher
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                                <i class="ri-search-line sm:mr-1"></i>
+                                <span class="hidden sm:inline">Rechercher</span>
                             </button>
                         </div>
                     </form>
@@ -291,15 +348,14 @@
                     <i class="ri-filter-3-line text-xl text-gray-600"></i>
                     <h3 class="text-lg font-semibold text-gray-800">Filtrer par technologie</h3>
                 </div>
-                <div class="flex flex-wrap gap-3">
+                <div class="flex flex-wrap gap-2">
                     <a href="{{ route('projects.all') }}" 
-                        class="filter-btn {{ !request('technology') ? 'active' : 'bg-white' }} px-5 py-2.5 rounded-full shadow-md hover:shadow-lg font-medium">
-                        <i class="ri-apps-line mr-1"></i>
-                        Tous
+                        class="filter-btn {{ !request('technology') ? 'active' : 'bg-white' }} px-3 sm:px-5 py-1.5 sm:py-2.5 text-sm rounded-full shadow-md hover:shadow-lg font-medium">
+                        <i class="ri-apps-line mr-1"></i>Tous
                     </a>
                     @foreach(\App\Models\Technologie::all() as $tech)
                         <a href="{{ route('projects.all', ['technology' => $tech->id]) }}" 
-                            class="filter-btn {{ request('technology') == $tech->id ? 'active' : 'bg-white' }} px-5 py-2.5 rounded-full shadow-md hover:shadow-lg font-medium transition-all">
+                            class="filter-btn {{ request('technology') == $tech->id ? 'active' : 'bg-white' }} px-3 sm:px-5 py-1.5 sm:py-2.5 text-sm rounded-full shadow-md hover:shadow-lg font-medium transition-all">
                             {{ $tech->name }}
                         </a>
                     @endforeach
@@ -325,11 +381,11 @@
         <!-- Projects Grid -->
         <div id="projects-grid" class="grid-view">
             @forelse ($projets as $projet)
-                <div class="project-card bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col"
+                <div class="project-card bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col sm:flex-col"
                     data-category="{{ $projet->technologies->pluck('name')->join(',') }}">
 
                     <!-- Image avec overlay -->
-                    <div class="project-image relative h-64 overflow-hidden">
+                    <div class="project-image relative h-36 sm:h-64 overflow-hidden flex-shrink-0">
                         <img src="{{ asset($projet->imagefirst) }}" 
                             alt="{{ $projet->title }}"
                             class="w-full h-full object-cover transform transition-transform duration-500">
@@ -372,30 +428,35 @@
                     </div>
 
                     <!-- Contenu -->
-                    <div class="p-6 flex-1 flex flex-col">
+                    <div class="p-5 sm:p-6 card-content flex-1 flex flex-col">
                         <div class="flex-1">
-                            <h3 class="text-2xl font-bold mb-3 text-gray-800 hover:text-purple-600 transition">
+                            <h3 class="text-sm sm:text-2xl font-bold mb-1 sm:mb-3 text-gray-800 hover:text-purple-600 transition leading-tight">
                                 <a href="{{ route('projet.show', $projet->id) }}">{{ $projet->title }}</a>
                             </h3>
-                            <p class="text-gray-600 mb-4 leading-relaxed line-clamp-3">
-                                {!! Str::limit(strip_tags($projet->description), 150) !!}
+                            <p class="card-desc text-gray-600 mb-4 leading-relaxed line-clamp-3 text-sm">
+                                {!! Str::limit(strip_tags($projet->description), 120) !!}
                             </p>
                         </div>
 
                         <!-- Technologies -->
-                        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
-                            @foreach ($projet->technologies->take(4) as $tech)
-                                <span class="inline-flex items-center gap-1 bg-gradient-to-r from-blue-50 to-purple-50 text-purple-700 text-xs px-3 py-1.5 rounded-full font-medium border border-purple-100">
-                                    <i class="ri-checkbox-circle-fill text-purple-500"></i>
+                        <div class="card-techs flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-gray-100">
+                            @foreach ($projet->technologies->take(3) as $tech)
+                                <span class="inline-flex items-center gap-1 bg-gradient-to-r from-blue-50 to-purple-50 text-purple-700 text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-medium border border-purple-100">
                                     {{ $tech->name }}
                                 </span>
                             @endforeach
                             @if($projet->technologies->count() > 4)
-                                <span class="inline-flex items-center bg-gray-100 text-gray-600 text-xs px-3 py-1.5 rounded-full font-medium">
+                                <span class="inline-flex items-center bg-gray-100 text-gray-600 text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-medium">
                                     +{{ $projet->technologies->count() - 4 }}
                                 </span>
                             @endif
                         </div>
+
+                        <!-- Lien visible sur mobile uniquement -->
+                        <a href="{{ route('projet.show', $projet->id) }}"
+                            class="sm:hidden mt-2 inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-800 transition">
+                            Voir le projet <i class="ri-arrow-right-line"></i>
+                        </a>
                     </div>
                 </div>
             @empty

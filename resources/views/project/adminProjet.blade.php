@@ -14,6 +14,8 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            max-width: 100%;
         }
 
         .sidebar-link {
@@ -83,7 +85,7 @@
         <i class="ri-menu-line text-2xl text-gray-700"></i>
     </button>
 
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen overflow-x-hidden">
         <!-- Sidebar -->
         <aside id="mobileSidebar" class="fixed lg:relative inset-y-0 left-0 z-40 w-72 bg-gradient-to-b from-gray-900 to-gray-800 text-white shadow-2xl flex flex-col">
             <!-- Logo -->
@@ -164,75 +166,63 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-h-screen lg:ml-0">
+        <main class="flex-1 flex flex-col min-h-screen lg:ml-0 min-w-0">
             <!-- Header -->
-            <header class="bg-white shadow-sm sticky top-0 z-30 p-6">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800">Gestion des Projets</h1>
-                        <p class="text-gray-500 mt-1">Gérez et organisez tous vos projets</p>
+            <header class="bg-white shadow-sm sticky top-0 z-30 p-4 sm:p-6">
+                <div class="flex justify-between items-center gap-4">
+                    <div class="pl-10 lg:pl-0">
+                        <h1 class="text-xl sm:text-3xl font-bold text-gray-800">Projets</h1>
+                        <p class="text-gray-500 text-xs sm:text-sm mt-0.5">Gérez vos projets</p>
                     </div>
                     <a href="{{ route('projects.create') }}"
-                        class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105">
-                        <i class="ri-add-line text-xl"></i>
-                        Nouveau Projet
+                        class="inline-flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold hover:shadow-lg transition-all text-sm">
+                        <i class="ri-add-line text-lg"></i>
+                        <span class="hidden sm:inline">Nouveau Projet</span>
+                        <span class="sm:hidden">Nouveau</span>
                     </a>
                 </div>
             </header>
 
             <!-- Filters Section -->
-            <section class="p-6">
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-                    <form action="{{ route('admin.project') }}" method="GET" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <!-- Search -->
+            <section class="p-4 sm:p-6">
+                <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                    <form action="{{ route('admin.project') }}" method="GET" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="relative">
                                 <i class="ri-search-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                <input type="text" 
-                                    name="search" 
-                                    value="{{ request('search') }}" 
-                                    placeholder="Rechercher un projet..."
-                                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    placeholder="Rechercher..."
+                                    class="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-sm">
                             </div>
-
-                            <!-- Status Filter -->
                             <div class="relative">
                                 <i class="ri-filter-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                                 <select name="status"
-                                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition appearance-none">
+                                    class="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition appearance-none text-sm">
                                     <option value="">Tous les statuts</option>
-                                    <option value="Terminé" {{ request('status') == 'Terminé' ? 'selected' : '' }}>Terminé</option>
-                                    <option value="En cours" {{ request('status') == 'En cours' ? 'selected' : '' }}>En cours</option>
-                                    <option value="En pause" {{ request('status') == 'En pause' ? 'selected' : '' }}>En pause</option>
+                                    <option value="termine" {{ request('status') == 'termine' ? 'selected' : '' }}>Terminé</option>
+                                    <option value="en_attente" {{ request('status') == 'en_attente' ? 'selected' : '' }}>En cours</option>
                                 </select>
                             </div>
-
-                            <!-- Technology Filter -->
                             <div class="relative">
                                 <i class="ri-code-s-slash-line absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                                 <select name="technology"
-                                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition appearance-none">
+                                    class="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition appearance-none text-sm">
                                     <option value="">Toutes les technologies</option>
                                     @foreach(\App\Models\Technologie::all() as $tech)
-                                        <option value="{{ $tech->id }}" {{ request('technology') == $tech->id ? 'selected' : '' }}>
-                                            {{ $tech->name }}
-                                        </option>
+                                        <option value="{{ $tech->id }}" {{ request('technology') == $tech->id ? 'selected' : '' }}>{{ $tech->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-
-                        <div class="flex gap-3">
+                        <div class="flex gap-2">
                             <button type="submit"
-                                class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg transition-all">
-                                <i class="ri-search-line"></i>
-                                Filtrer
+                                class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg transition-all text-sm">
+                                <i class="ri-search-line"></i> Filtrer
                             </button>
                             @if(request('search') || request('status') || request('technology'))
                                 <a href="{{ route('admin.project') }}"
-                                    class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-6 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition-all">
-                                    <i class="ri-refresh-line"></i>
-                                    Réinitialiser
+                                    class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-xl font-medium hover:bg-gray-200 transition-all text-sm">
+                                    <i class="ri-refresh-line"></i> Réinitialiser
                                 </a>
                             @endif
                         </div>
@@ -241,44 +231,86 @@
             </section>
 
             <!-- Projects Table -->
-            <section class="p-6 flex-1">
+            <section class="px-4 sm:p-6 flex-1">
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                    <!-- Table Header -->
-                    <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                    <!-- Header -->
+                    <div class="p-4 sm:p-6 border-b border-gray-200 flex items-center justify-between">
                         <div>
-                            <h2 class="text-xl font-bold text-gray-800">Liste des projets</h2>
+                            <h2 class="text-lg sm:text-xl font-bold text-gray-800">Liste des projets</h2>
                             <p class="text-sm text-gray-500 mt-1">{{ $projects->total() }} projet(s) au total</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <button class="p-2 hover:bg-gray-100 rounded-lg transition">
                                 <i class="ri-download-line text-xl text-gray-600"></i>
                             </button>
-                            <button class="p-2 hover:bg-gray-100 rounded-lg transition">
-                                <i class="ri-printer-line text-xl text-gray-600"></i>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Table -->
-                    <div class="overflow-x-auto">
+                    {{-- ── CARTES MOBILE (< md) ── --}}
+                    <div class="md:hidden divide-y divide-gray-100">
+                        @forelse ($projects as $project)
+                        <div class="p-4 flex gap-3 items-start">
+                            <img src="{{ asset($project->imagefirst) }}" alt="{{ $project->title }}"
+                                class="w-16 h-16 rounded-xl object-cover flex-shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start justify-between gap-2">
+                                    <p class="font-semibold text-gray-800 text-sm leading-tight truncate">{{ $project->title }}</p>
+                                    <span class="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
+                                        @if($project->status == 'termine') bg-green-100 text-green-700
+                                        @else bg-blue-100 text-blue-700 @endif">
+                                        {{ $project->status == 'termine' ? 'Terminé' : 'En cours' }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 line-clamp-1">{{ Str::limit(strip_tags($project->description), 60) }}</p>
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    @foreach ($project->technologies->take(2) as $tech)
+                                        <span class="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-md">{{ $tech->name }}</span>
+                                    @endforeach
+                                    @if($project->technologies->count() > 2)
+                                        <span class="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md">+{{ $project->technologies->count() - 2 }}</span>
+                                    @endif
+                                </div>
+                                <div class="flex items-center gap-2 mt-3">
+                                    <a href="{{ route('projet.show', $project->id) }}"
+                                        class="flex-1 text-center py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition">
+                                        <i class="ri-eye-line"></i> Voir
+                                    </a>
+                                    <a href="{{ route('projects.edit', $project->id) }}"
+                                        class="flex-1 text-center py-1.5 bg-blue-100 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-200 transition">
+                                        <i class="ri-edit-line"></i> Modifier
+                                    </a>
+                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST"
+                                        onsubmit="return confirm('Supprimer ce projet ?');" class="flex-1">
+                                        @csrf @method('DELETE')
+                                        <button type="submit"
+                                            class="w-full py-1.5 bg-red-100 text-red-600 rounded-lg text-xs font-medium hover:bg-red-200 transition">
+                                            <i class="ri-delete-bin-line"></i> Suppr.
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-8 text-center">
+                            <i class="ri-folder-open-line text-4xl text-gray-300 mb-3 block"></i>
+                            <p class="text-gray-500 text-sm">Aucun projet trouvé</p>
+                            <a href="{{ route('projects.create') }}" class="mt-3 inline-flex items-center gap-1 text-sm text-purple-600 font-medium">
+                                <i class="ri-add-line"></i> Créer un projet
+                            </a>
+                        </div>
+                        @endforelse
+                    </div>
+
+                    {{-- ── TABLEAU DESKTOP (>= md) ── --}}
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Projet
-                                    </th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Statut
-                                    </th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Technologies
-                                    </th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Date
-                                    </th>
-                                    <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Actions
-                                    </th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Projet</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Statut</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Technologies</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -286,8 +318,7 @@
                                     <tr class="project-row">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-4">
-                                                <img src="{{ asset($project->imagefirst) }}" 
-                                                    alt="{{ $project->title }}"
+                                                <img src="{{ asset($project->imagefirst) }}" alt="{{ $project->title }}"
                                                     class="w-16 h-16 rounded-lg object-cover">
                                                 <div>
                                                     <p class="font-semibold text-gray-800">{{ $project->title }}</p>
@@ -297,18 +328,9 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold
-                                                @if ($project->status == 'Terminé') bg-green-100 text-green-700
-                                                @elseif($project->status == 'En cours') bg-blue-100 text-blue-700
-                                                @elseif($project->status == 'En pause') bg-yellow-100 text-yellow-700
-                                                @else bg-gray-100 text-gray-700 @endif">
-                                                @if ($project->status == 'Terminé')
-                                                    <i class="ri-checkbox-circle-fill"></i>
-                                                @elseif($project->status == 'En cours')
-                                                    <i class="ri-time-line"></i>
-                                                @else
-                                                    <i class="ri-pause-circle-fill"></i>
-                                                @endif
-                                                {{ $project->status }}
+                                                @if($project->status == 'termine') bg-green-100 text-green-700
+                                                @else bg-blue-100 text-blue-700 @endif">
+                                                {{ $project->status == 'termine' ? 'Terminé' : 'En cours' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4">
@@ -325,32 +347,25 @@
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <div class="text-sm text-gray-600">
-                                                <i class="ri-calendar-line mr-1"></i>
-                                                {{ $project->created_at->format('d M Y') }}
-                                            </div>
+                                        <td class="px-6 py-4 text-sm text-gray-600">
+                                            <i class="ri-calendar-line mr-1"></i>
+                                            {{ $project->created_at->format('d M Y') }}
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex items-center justify-end gap-2">
                                                 <a href="{{ route('projet.show', $project->id) }}"
-                                                    class="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
-                                                    title="Voir">
+                                                    class="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition" title="Voir">
                                                     <i class="ri-eye-line"></i>
                                                 </a>
                                                 <a href="{{ route('projects.edit', $project->id) }}"
-                                                    class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition"
-                                                    title="Modifier">
+                                                    class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition" title="Modifier">
                                                     <i class="ri-edit-line"></i>
                                                 </a>
                                                 <form action="{{ route('projects.destroy', $project->id) }}" method="POST"
-                                                    onsubmit="return confirm('Voulez-vous vraiment supprimer ce projet ?');"
-                                                    class="inline">
-                                                    @csrf
-                                                    @method('DELETE')
+                                                    onsubmit="return confirm('Voulez-vous vraiment supprimer ce projet ?');" class="inline">
+                                                    @csrf @method('DELETE')
                                                     <button type="submit"
-                                                        class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition"
-                                                        title="Supprimer">
+                                                        class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition" title="Supprimer">
                                                         <i class="ri-delete-bin-line"></i>
                                                     </button>
                                                 </form>
@@ -370,8 +385,7 @@
                                                 </div>
                                                 <a href="{{ route('projects.create') }}"
                                                     class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
-                                                    <i class="ri-add-line"></i>
-                                                    Créer un projet
+                                                    <i class="ri-add-line"></i> Créer un projet
                                                 </a>
                                             </div>
                                         </td>
@@ -383,7 +397,7 @@
 
                     <!-- Pagination -->
                     @if($projects->hasPages())
-                        <div class="p-6 border-t border-gray-200">
+                        <div class="p-4 sm:p-6 border-t border-gray-200">
                             {{ $projects->links() }}
                         </div>
                     @endif

@@ -18,7 +18,7 @@ class AppController extends Controller
         $projets = Projet::with('technologies')
             ->where('status', 'termine') 
             ->orderByDesc('id')
-            ->take(6)
+            ->take(3)
             ->get();
 
         return view('portfolio', compact('user', 'projets'));
@@ -71,7 +71,7 @@ public function send(Request $request)
         $data = $request->only('name', 'email', 'subject', 'message');
 
         // Envoi de l'email
-        Mail::send('contact', $data, function($message) use ($data) {
+        Mail::send('emails.contact', $data, function($message) use ($data) {
             $message->to('somissicarlos56@gmail.com', 'SOMISSI Mahunan Carlos')
                     ->subject('Nouveau message: ' . $data['subject'])
                     ->replyTo($data['email'], $data['name']);

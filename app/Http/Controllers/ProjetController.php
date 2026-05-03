@@ -25,20 +25,22 @@ class ProjetController extends Controller
     }
 
         public function store(ProjetCreateRequest $request)
+
     {
+        
           $validatedData = $request->validated();
          
         // Création du projet
         $projet = Projet::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'objectives' => $request->objectives,
-            'challenges' => $request->challenges,
-            'fonctionnalites' => $request->fonctionnalites,
-            'imagefirst' => $this->imagePath($request->file('imagefirst')),
+            'title'              => $request->title,
+            'description'        => $request->description,
+            'objectives'         => $request->objectives ?? [],
+            'challenges'         => $request->challenges ?? [],
+            'fonctionnalites'    => $request->fonctionnalites ?? [],
+            'imagefirst'         => $this->imagePath($request->file('imagefirst')),
             'link_visualisation' => $request->link_visualisation,
-            'link_github' => $request->link_github,
-            'status'=>$request->status,
+            'link_github'        => $request->link_github,
+            'status'             => $request->status,
         ]);
 
         
@@ -56,15 +58,21 @@ class ProjetController extends Controller
     }
 
     public function show(string $id)
-    {   
-        $user =  User::find(1);
-            $projet = Projet::with('images', 'technologies')
-        ->where('id', $id)
-        ->where('status', 'termine')
-        ->firstOrFail();   
-       
-         return view('project.Pro', compact('projet','user'));
+    {
+        $user  = User::find(1);
+        $projet = Projet::with('images', 'technologies')
+            ->where('id', $id)
+            ->where('status', 'termine')
+            ->firstOrFail();
 
+        $suggestions = Projet::with('technologies')
+            ->where('status', 'termine')
+            ->where('id', '!=', $id)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
+        return view('project.Pro', compact('projet', 'user', 'suggestions'));
     }
 
    
@@ -87,17 +95,16 @@ class ProjetController extends Controller
 {
     $project = Projet::findOrFail($id);
 
-    // Mettre à jour les informations du projet
-        $project->update($request->only([
-        'title',
-        'description',
-        'objectives',
-        'challenges',
-        'fonctionnalites',
-        'link_visualisation',
-        'link_github',
-        'status',
-    ]));
+    $project->update([
+        'title'              => $request->title,
+        'description'        => $request->description,
+        'objectives'         => $request->objectives ?? [],
+        'challenges'         => $request->challenges ?? [],
+        'fonctionnalites'    => $request->fonctionnalites ?? [],
+        'link_visualisation' => $request->link_visualisation,
+        'link_github'        => $request->link_github,
+        'status'             => $request->status,
+    ]);
 
 
     if ($request->hasFile('imagefirst')) {
@@ -118,7 +125,7 @@ class ProjetController extends Controller
     // Enregistrer les modifications
     $project->save();
 
-    //return redirect()->route('projects.index')->with('success', 'Projet mis à jour avec succès.');
+    return redirect()->route('projects.index')->with('success', 'Projet mis à jour avec succès.');
 }
 
     /**

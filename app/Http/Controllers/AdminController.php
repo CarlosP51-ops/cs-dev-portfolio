@@ -167,22 +167,22 @@ class AdminController extends Controller
         return redirect()->route('home')->with('success', 'Vous êtes déconnecté avec succès.');
     }
     public function cv() {
-    $user = User::find(1);
-    
-    if (!$user || !$user->cv_path) {
-        abort(404); // fichier non trouvé
+        $user = User::find(1);
+
+        if (!$user || !$user->cv_path) {
+            abort(404);
+        }
+
+        // cv_path contient "/storage/cv/fichier.pdf", on extrait le chemin relatif
+        $relativePath = ltrim(str_replace('/storage/', '', $user->cv_path), '/');
+        $filePath = storage_path('app/public/' . $relativePath);
+
+        if (!file_exists($filePath)) {
+            abort(404);
+        }
+
+        return response()->download($filePath);
     }
-
-    // Récupérer le chemin physique du fichier
-    $filePath = storage_path('app/public/' . $user->cv_path);
-
-    // Vérifier que le fichier existe réellement
-    if (!file_exists($filePath)) {
-        abort(404);
-    }
-
-    return response()->download($filePath);
-}
 
 
     public function Profil(){
