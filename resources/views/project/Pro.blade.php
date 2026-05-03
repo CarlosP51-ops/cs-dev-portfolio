@@ -14,7 +14,7 @@
     <style>
         body { font-family: 'Poppins', sans-serif; }
         #reading-progress { position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#667eea,#764ba2);z-index:9999;transition:width .1s ease; }
-        .hero-gradient { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);position:relative;overflow:hidden; }
+        .hero-gradient { background:linear-gradient(135deg,#667eea 0%,#204ba2 100%);position:relative;overflow:hidden; }
         .hero-gradient::before { content:'';position:absolute;inset:0;background:url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0L0 0 0 60" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/></pattern></defs><rect width="60" height="60" fill="url(%23g)"/></svg>'); }
         .breadcrumb-item:not(:last-child)::after { content:'›';margin:0 .4rem;color:rgba(255,255,255,.45); }
         .card { transition:transform .3s ease,box-shadow .3s ease; }
@@ -111,7 +111,7 @@
                 {{-- Description --}}
                 <div class="card bg-white rounded-3xl border border-slate-100 shadow-xl p-7">
                     <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-gray-500  flex items-center justify-center text-white flex-shrink-0">
                             <i class="ri-file-text-line text-lg"></i>
                         </div>
                         <h2 class="text-xl font-bold text-slate-800">À propos du projet</h2>
@@ -123,7 +123,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="card bg-white rounded-3xl border border-slate-100 shadow-xl p-6">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0"><i class="ri-target-line text-lg"></i></div>
+                            <div class="w-9 h-9 rounded-lg bg-blue-500 text-blue-600 flex items-center justify-center flex-shrink-0"><i class="ri-target-line text-lg"></i></div>
                             <h3 class="font-bold text-slate-800">Objectifs</h3>
                         </div>
                         <ul class="space-y-2.5">

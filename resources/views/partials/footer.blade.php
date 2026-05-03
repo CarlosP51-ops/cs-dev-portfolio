@@ -61,7 +61,7 @@
                 <ul class="space-y-3 text-gray-300 text-sm">
                     <li class="flex items-center gap-2">
                         <i class="ri-mail-line text-yellow-300"></i>
-                        <span>somissicarlos56@gmail.com</span>
+                        <span>{{$user->email}}</span>
                     </li>
                     <li class="flex items-center gap-2">
                         <i class="ri-phone-line text-yellow-300"></i>

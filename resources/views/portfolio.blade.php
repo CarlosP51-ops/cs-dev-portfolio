@@ -298,7 +298,7 @@
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <a href="#projets"
-                        class="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-medium hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105">
+                        class="group inline-flex items-center gap-2 bg-gradient-to-r bg-blue-600  text-white px-8 py-4 rounded-full font-medium hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105">
                         Découvrez mes projets
                         <i class="ri-arrow-right-line group-hover:translate-x-1 transition-transform"></i>
                     </a>
@@ -366,10 +366,6 @@
                             <div class="text-sm text-gray-600">Projets réalisés</div>
                         </div>
                         <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="text-3xl font-bold text-pink-600 mb-1 counter" data-target="15">0</div>
-                            <div class="text-sm text-gray-600">Clients satisfaits</div>
-                        </div>
-                        <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <div class="text-3xl font-bold text-indigo-600 mb-1 counter" data-target="100">0</div>
                             <div class="text-sm text-gray-600">% Engagement</div>
                         </div>
@@ -407,12 +403,7 @@
                                 </div>
                                 <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">Laravel</span>
                             </div>
-                            <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                                <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-green-600 bg-green-50 rounded-lg group-hover:scale-110 transition">
-                                    <i class="ri-node-js-line text-xl sm:text-2xl"></i>
-                                </div>
-                                <span class="font-semibold text-gray-700 text-sm sm:text-base truncate">Node.js</span>
-                            </div>
+
                             <div class="group bg-white rounded-xl shadow-md p-3 sm:p-4 flex items-center gap-2 sm:gap-3 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                                 <div class="w-9 h-9 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center text-blue-600 bg-blue-50 rounded-lg group-hover:scale-110 transition">
                                     <i class="ri-palette-line text-xl sm:text-2xl"></i>
@@ -423,7 +414,7 @@
                     </div>
 
                     <a href="#contact"
-                        class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105">
+                        class="inline-flex items-center gap-2 bg-blue-600  text-white px-6 py-3 rounded-full font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105">
                         Contactez-moi
                         <i class="ri-arrow-right-line"></i>
                     </a>
@@ -565,7 +556,7 @@
                                     <div class="w-8 h-8 flex items-center justify-center mr-3 mt-0.5">
                                         <i class="ri-map-pin-line ri-lg"></i>
                                     </div>
-                                    <span>15 Rue de la République, 69001 Lyon, France</span>
+                                    <span>Cotonou, Benin</span>
                                 </div>
 
                                 <div class="flex items-center">

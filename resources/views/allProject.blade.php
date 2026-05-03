@@ -34,7 +34,7 @@
 
         /* Hero gradient background */
         .hero-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #204ba2 100%);
             position: relative;
             overflow: hidden;
         }
@@ -56,7 +56,7 @@
         }
 
         .filter-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #204ba2 100%);
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
@@ -118,7 +118,7 @@
             right: 30px;
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #204ba2 100%);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -148,7 +148,7 @@
         }
 
         .view-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #204ba2 100%);
             color: white;
         }
 
@@ -306,7 +306,7 @@
                                 value="{{ request('search') }}"
                                 class="w-full pl-11 pr-14 sm:pr-36 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm sm:text-base shadow-lg transition-all">
                             <button type="submit"
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600  text-white px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 font-medium">
                                 <i class="ri-search-line sm:mr-1"></i>
                                 <span class="hidden sm:inline">Rechercher</span>
                             </button>
