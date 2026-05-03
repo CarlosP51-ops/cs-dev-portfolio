@@ -41,9 +41,19 @@ php-fpm -D
 # Attendre PHP-FPM
 sleep 2
 
+# Attendre que la DB soit accessible
+echo "Attente de la base de données..."
+for i in $(seq 1 30); do
+    php artisan db:show --no-interaction > /dev/null 2>&1 && break
+    echo "DB pas encore prête, tentative $i/30..."
+    sleep 2
+done
+
 # Migrations + Seeders
-php artisan migrate --force 2>/dev/null || echo "Migration skipped"
-php artisan db:seed --force 2>/dev/null || echo "Seeder skipped"
+echo "Lancement des migrations..."
+php artisan migrate --force
+echo "Lancement des seeders..."
+php artisan db:seed --force
 
 # Storage link
 php artisan storage:link --force 2>/dev/null || true
